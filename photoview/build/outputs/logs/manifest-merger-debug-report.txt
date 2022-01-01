@@ -1,0 +1,25 @@
+-- Merging decision tree log ---
+manifest
+ADDED from E:\zero2unicorn_dev-city-people-android-08806f65eb93 (1)\zero2unicorn_dev-city-people-android-08806f65eb93\photoview\src\main\AndroidManifest.xml:2:1-4:12
+INJECTED from E:\zero2unicorn_dev-city-people-android-08806f65eb93 (1)\zero2unicorn_dev-city-people-android-08806f65eb93\photoview\src\main\AndroidManifest.xml:2:1-4:12
+INJECTED from E:\zero2unicorn_dev-city-people-android-08806f65eb93 (1)\zero2unicorn_dev-city-people-android-08806f65eb93\photoview\src\main\AndroidManifest.xml:2:1-4:12
+	package
+		ADDED from E:\zero2unicorn_dev-city-people-android-08806f65eb93 (1)\zero2unicorn_dev-city-people-android-08806f65eb93\photoview\src\main\AndroidManifest.xml:2:11-52
+		INJECTED from E:\zero2unicorn_dev-city-people-android-08806f65eb93 (1)\zero2unicorn_dev-city-people-android-08806f65eb93\photoview\src\main\AndroidManifest.xml
+		INJECTED from E:\zero2unicorn_dev-city-people-android-08806f65eb93 (1)\zero2unicorn_dev-city-people-android-08806f65eb93\photoview\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from E:\zero2unicorn_dev-city-people-android-08806f65eb93 (1)\zero2unicorn_dev-city-people-android-08806f65eb93\photoview\src\main\AndroidManifest.xml:2:1-4:12
+uses-sdk
+INJECTED from E:\zero2unicorn_dev-city-people-android-08806f65eb93 (1)\zero2unicorn_dev-city-people-android-08806f65eb93\photoview\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from E:\zero2unicorn_dev-city-people-android-08806f65eb93 (1)\zero2unicorn_dev-city-people-android-08806f65eb93\photoview\src\main\AndroidManifest.xml
+INJECTED from E:\zero2unicorn_dev-city-people-android-08806f65eb93 (1)\zero2unicorn_dev-city-people-android-08806f65eb93\photoview\src\main\AndroidManifest.xml
+INJECTED from E:\zero2unicorn_dev-city-people-android-08806f65eb93 (1)\zero2unicorn_dev-city-people-android-08806f65eb93\photoview\src\main\AndroidManifest.xml
+INJECTED from E:\zero2unicorn_dev-city-people-android-08806f65eb93 (1)\zero2unicorn_dev-city-people-android-08806f65eb93\photoview\src\main\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from E:\zero2unicorn_dev-city-people-android-08806f65eb93 (1)\zero2unicorn_dev-city-people-android-08806f65eb93\photoview\src\main\AndroidManifest.xml
+		ADDED from E:\zero2unicorn_dev-city-people-android-08806f65eb93 (1)\zero2unicorn_dev-city-people-android-08806f65eb93\photoview\src\main\AndroidManifest.xml
+		INJECTED from E:\zero2unicorn_dev-city-people-android-08806f65eb93 (1)\zero2unicorn_dev-city-people-android-08806f65eb93\photoview\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from E:\zero2unicorn_dev-city-people-android-08806f65eb93 (1)\zero2unicorn_dev-city-people-android-08806f65eb93\photoview\src\main\AndroidManifest.xml
+		ADDED from E:\zero2unicorn_dev-city-people-android-08806f65eb93 (1)\zero2unicorn_dev-city-people-android-08806f65eb93\photoview\src\main\AndroidManifest.xml
+		INJECTED from E:\zero2unicorn_dev-city-people-android-08806f65eb93 (1)\zero2unicorn_dev-city-people-android-08806f65eb93\photoview\src\main\AndroidManifest.xml

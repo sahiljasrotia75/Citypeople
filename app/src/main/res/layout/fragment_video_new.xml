@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+ Copyright 2014 The Android Open Source Project
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:timer="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black">
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            timer:cardCornerRadius="@dimen/_16sdp"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_centerInParent="true"
+                    android:layout_height="match_parent"
+                    android:background="@color/black">
+
+                    <!--<com.halilibo.bettervideoplayer.BetterVideoPlayer
+                        android:id="@+id/player"
+                        android:layout_width="match_parent"
+                        android:layout_height="fill_parent"
+                        timer:bvp_disableControls="true"
+                        timer:layout_constraintBottom_toBottomOf="parent"
+                        timer:layout_constraintEnd_toEndOf="parent"
+                        timer:layout_constraintStart_toStartOf="parent"
+                        timer:layout_constraintTop_toTopOf="parent"
+                        />-->
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/feeds_media_rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        timer:layout_constraintDimensionRatio="9:16"
+                        timer:layout_constraintHorizontal_bias="0.0"
+                        timer:layout_constraintVertical_bias="0.0" />
+
+                    <View
+                        android:id="@+id/viewLeft"
+                        android:layout_width="@dimen/_60sdp"
+                        android:layout_height="0dp"
+                        android:layout_marginVertical="@dimen/_50sdp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintTop_toTopOf="parent"
+                        timer:layout_constraintStart_toStartOf="parent" />
+
+                    <View
+                        android:id="@+id/viewRight"
+                        android:layout_width="@dimen/_60sdp"
+                        android:layout_height="0dp"
+                        android:layout_marginVertical="@dimen/_50sdp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:id="@+id/blockView"
+                        android:background="@color/black"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="1"
+                        app:layout_constraintHeight_percent="0.2" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="@dimen/_200sdp"
+                        android:layout_height="@dimen/_200sdp"
+                        android:id="@+id/mainConstraint1"
+                        timer:layout_constraintLeft_toLeftOf="parent"
+                        timer:layout_constraintRight_toRightOf="parent"
+                        timer:layout_constraintBottom_toTopOf="@id/blockView"
+                        timer:layout_constraintVertical_bias="1">
+
+
+                        <RelativeLayout
+                            android:id="@+id/controlback"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:gravity="center"
+                            android:paddingBottom="10dp"
+                            timer:layout_constraintBottom_toBottomOf="parent"
+                            timer:layout_constraintEnd_toEndOf="parent"
+                            timer:layout_constraintStart_toStartOf="parent"
+                            timer:layout_constraintTop_toTopOf="parent"
+                            timer:layout_constraintVertical_bias="0.45">
+
+                            <ImageView
+                                android:id="@+id/pictureback"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true"
+                                android:layout_gravity="center" />
+
+                            <io.github.krtkush.lineartimer.LinearTimerView
+                                android:id="@+id/linearTimerback"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true"
+                                timer:initialColor="@color/white"
+                                timer:progressColor="@color/appprimarycolor"
+                                timer:radius="12dp"
+                                timer:startingPoint="270"
+                                timer:strokeWidth="2dp" />
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/control"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:gravity="center"
+                            android:paddingBottom="6dp"
+                            timer:layout_constraintBottom_toBottomOf="parent"
+                            timer:layout_constraintEnd_toEndOf="parent"
+                            timer:layout_constraintStart_toStartOf="parent"
+                            timer:layout_constraintTop_toTopOf="parent"
+                            timer:layout_constraintVertical_bias="0.8">
+
+                            <ImageView
+                                android:id="@+id/picture"
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="10dp" />
+
+                            <io.github.krtkush.lineartimer.LinearTimerView
+                                android:id="@+id/linearTimer"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true"
+                                timer:initialColor="@color/white"
+                                timer:progressColor="@color/appprimarycolor"
+                                timer:radius="16dp"
+                                timer:startingPoint="270"
+                                timer:strokeWidth="2dp" />
+
+                        </RelativeLayout>
+
+                        <TextView
+                            android:id="@+id/tv_hold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_medium"
+                            android:gravity="center"
+                            android:text="Hold to talk"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_10sdp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@+id/control"
+                            app:layout_constraintStart_toStartOf="@+id/control"
+                            app:layout_constraintTop_toBottomOf="@+id/control"
+                            timer:layout_constraintVertical_bias="0.0" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <ImageView
+                    android:id="@+id/img_od_logo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:src="@drawable/location" />
+
+
+                <TextView
+                    android:id="@+id/txtName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="nghjsdh"
+                    android:visibility="gone"
+                    android:maxLength="15"
+                    android:layout_marginTop="@dimen/_22sdp"
+                    android:layout_toRightOf="@+id/img_od_logo"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_10sdp" />
+
+                <TextView
+                    android:id="@+id/current_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/img_od_logo"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:visibility="gone"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_10sdp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:id="@+id/group_friend_layout"
+                    android:layout_marginVertical="@dimen/_12sdp"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:orientation="horizontal">
+
+
+                    <ImageView
+                        android:id="@+id/btnBack"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_8sdp"
+                        android:layout_marginHorizontal="@dimen/_8sdp"
+                        app:srcCompat="@drawable/circle_back_button"
+                        app:layout_constraintTop_toTopOf="@id/imageView3"
+                        app:layout_constraintBottom_toBottomOf="@id/imageView3"
+                        app:layout_constraintRight_toLeftOf="@id/imageView3" />
+
+                    <ImageView
+                        android:id="@+id/imageView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_8sdp"
+                        android:layout_marginVertical="@dimen/_12sdp"
+                        android:src="@drawable/dots_menu"
+                        app:layout_constraintBottom_toBottomOf="@id/img_od_logo"
+                        app:layout_constraintEnd_toStartOf="@+id/materialCardView"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintTop_toTopOf="@id/img_od_logo"
+                        app:tint="@color/white" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/materialCardView"
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="@dimen/_120sdp"
+                        android:layout_marginHorizontal="@dimen/_8sdp"
+                        app:cardCornerRadius="@dimen/_10sdp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:background="@drawable/green_outline"
+                            android:layout_height="wrap_content">
+
+                                <com.citypeople.project.cameranew.AutoFitTextureView
+                                    android:id="@+id/texture"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    timer:layout_constraintBottom_toBottomOf="parent"
+                                    timer:layout_constraintDimensionRatio="9:16"
+                                    timer:layout_constraintEnd_toEndOf="parent"
+                                    timer:layout_constraintStart_toStartOf="parent"
+                                    timer:layout_constraintTop_toTopOf="parent"
+                                    timer:layout_constraintVertical_bias="0" />
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+
+
+                <ImageView
+                    android:id="@+id/img_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginRight="@dimen/_20sdp"
+                    android:layout_marginBottom="@dimen/_58sdp"
+                    android:padding="10dp"
+                    android:src="@drawable/delete"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="@dimen/_65sdp"
+                    android:layout_marginRight="@dimen/_16sdp"
+                    android:textColor="@color/white" />
+
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+    </RelativeLayout>
+</layout>

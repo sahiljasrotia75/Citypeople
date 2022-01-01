@@ -1,0 +1,197 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+
+}
+def koin_version = '2.0.1'
+
+android {
+
+    androidExtensions {
+        experimental = true
+    }
+    compileSdk 31
+    buildToolsVersion "30.0.3"
+    buildFeatures {
+        dataBinding true
+        viewBinding true
+    }
+    defaultConfig {
+        applicationId "com.citypeople.project"
+        minSdk 21
+        targetSdk 31
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+    implementation 'com.google.android.gms:play-services-maps:17.0.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    annotationProcessor "androidx.room:room-compiler:2.3.0"
+
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation "androidx.cardview:cardview:1.0.0"
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.google.android.material:material:1.3.0'
+
+    // ViewModel and LiveData
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    //noinspection LifecycleAnnotationProcessorWithJava8
+    annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.2.0'
+
+    // Kotlin coroutines dependencies
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0'
+
+    //rxjava
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.14'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
+
+    //dagger
+    implementation 'com.google.dagger:dagger:2.27'
+    //noinspection OutdatedLibrary
+    implementation 'com.google.dagger:dagger-android:2.15'
+    implementation 'com.google.dagger:dagger-android-support:2.13'
+    //kapt 'com.google.dagger:dagger-compiler:2.27'
+   // kapt 'com.google.dagger:dagger-android-processor:2.13'
+
+    // Runtime permission
+    dependencies {
+        implementation "org.permissionsdispatcher:permissionsdispatcher:4.3.1"
+        kapt "org.permissionsdispatcher:permissionsdispatcher-processor:4.3.1"
+    }
+
+  /*  //okhttp
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'*/
+
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    //glide
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    dependencies {
+        kapt('com.github.bumptech.glide:compiler:4.12.0')
+    }
+    implementation 'com.github.bumptech.glide:okhttp3-integration:4.4.0'
+
+    //Circle imageview
+    implementation 'de.hdodenhof:circleimageview:3.0.2'
+
+    implementation 'com.hbb20:ccp:2.5.4'
+
+    // Kotlin + coroutines
+    implementation 'androidx.work:work-runtime-ktx:2.6.0'
+
+    implementation 'com.google.android.gms:play-services-auth:19.2.0'
+
+    //facebook
+    implementation 'com.facebook.android:facebook-android-sdk:8.1.0'
+    implementation 'com.facebook.android:facebook-login:8.1.0'
+
+    // Dimens library for view sizes
+    implementation 'com.intuit.sdp:sdp-android:1.0.6'
+
+    implementation project(':otpview')
+    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.github.krtkush:LinearTimer:v2.1.1'
+
+    implementation platform('com.google.firebase:firebase-bom:29.0.1')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-auth-ktx'
+
+    implementation 'com.google.android.exoplayer:exoplayer:2.14.2' //2.59 MB
+
+    api project(path: ':ffmpegVideoOperation')
+    api project(path: ':photoview')
+    //Progress bar
+    implementation 'com.kaopiz:kprogresshud:1.2.0'
+    //retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.7.1'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.7.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.7.1'
+
+    //okhttp
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.2'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.3.1'
+
+    //Video Compression
+    implementation 'com.github.AbedElazizShe:LightCompressor:1.0.1'
+    // Koin for the dependencies injections
+    implementation 'org.koin:koin-android:2.0.0-rc-2'
+    implementation 'org.koin:koin-android-viewmodel:2.0.0-rc-2'
+    implementation 'org.koin:koin-androidx-scope:2.0.0-rc-2'
+
+
+    debugImplementation('androidx.fragment:fragment-testing:1.4.0') {
+        exclude group: 'androidx.test', module: 'monitor'
+    }
+
+    // dependency for exoplayer
+
+    implementation 'com.google.android.exoplayer:exoplayer:r2.4.0'
+
+// for core support in exoplayer.
+
+    implementation 'com.google.android.exoplayer:exoplayer-core:r2.4.0'
+
+
+
+// for adding dash support in our exoplayer.
+
+    implementation 'com.google.android.exoplayer:exoplayer-dash:r2.4.0'
+
+// for adding hls support in exoplayer.
+
+    implementation 'com.google.android.exoplayer:exoplayer-hls:r2.4.0'
+
+// for smooth streaming of video in our exoplayer.
+
+    implementation 'com.google.android.exoplayer:exoplayer-smoothstreaming:r2.4.0'
+
+// for generating default ui of exoplayer
+
+    implementation 'com.google.android.exoplayer:exoplayer-ui:r2.4.0'
+
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    implementation 'com.github.halilozercan:BetterVideoPlayer:1.0.0'
+
+
+
+    //implementation('com.danikula:videocache:2.3.4')
+}

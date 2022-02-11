@@ -58,6 +58,7 @@ class VideoSendActivity : BaseActivity(), VideoSendListener,
     var gg = ArrayList<String>()
 
     var recordedVideoPath: String? = ""
+    var myLocation: String? = ""
     var recordedVideoFile: File? = null
 
     companion object {
@@ -83,11 +84,17 @@ class VideoSendActivity : BaseActivity(), VideoSendListener,
     }
 
     private fun extractIntent() {
-        if (intent?.extras == null || intent.extras?.containsKey(Constants.INTENT_DATA) == false)
-            return
+        if (intent?.extras == null || intent.extras?.containsKey(Constants.INTENT_DATA) == false) return
+        if (intent.extras?.containsKey("currentLocation") == false) return
 
-        if (intent.extras?.containsKey(Constants.INTENT_DATA) == true)
+        if (intent.extras?.containsKey(Constants.INTENT_DATA) == true && intent.extras?.containsKey(
+                "currentLocation"
+            ) == true
+        )
             recordedVideoPath = intent.extras?.getString(Constants.INTENT_DATA)
+        myLocation = intent.extras?.getString("currentLocation")
+        Log.e("MyLocation", myLocation.toString())
+
 
     }
 
@@ -372,20 +379,28 @@ class VideoSendActivity : BaseActivity(), VideoSendListener,
             })
         val friendList = arrayListOf<Int>()
         //friendList.add(3)
-        friendList.addAll(mVideoAdapter.getCurrentItems().filter { it.isSelected && it.is_group == false }.map {
-               it.id
+        friendList.addAll(
+            mVideoAdapter.getCurrentItems().filter { it.isSelected && it.is_group == false }.map {
+                it.id
             })
         if (friendList.isNullOrEmpty() && groupList.isEmpty()) {
             Toast.makeText(this, "Your friend List is Empty", Toast.LENGTH_SHORT).show()
         } else {
-            val currentUser = mAuth.currentUser
-            val jsonObject = JSONObject()
-            jsonObject.put("friends", friendList)
-            jsonObject.put("groups", groupList)
-            jsonObject.put("phone", currentUser?.phoneNumber)
+            if (myLocation.isNullOrEmpty()) {
+                Toast.makeText(this, "Please turn on your location", Toast.LENGTH_SHORT).show()
+            } else {
+                val currentUser = mAuth.currentUser
+                val jsonObject = JSONObject()
+                jsonObject.put("friends", friendList)
+                jsonObject.put("groups", groupList)
+                jsonObject.put("phone", currentUser?.phoneNumber)
+                jsonObject.put("location", myLocation)
 
-            val file = File(recordedVideoPath)//ImagePickerUtils.getFilePathFromURI(this, Uri.parse(recordedVideoPath)))
-            mViewModel.sendVideo(jsonObject, file)
+                val file =
+                    File(recordedVideoPath)//ImagePickerUtils.getFilePathFromURI(this, Uri.parse(recordedVideoPath)))
+                mViewModel.sendVideo(jsonObject, file)
+            }
+
         }
     }
 
@@ -397,23 +412,30 @@ class VideoSendActivity : BaseActivity(), VideoSendListener,
             gg.add(name)
         }
         mGroupListAdapter.updateData(gg)
-        Log.e("userId",id.toString())
+        Log.e("userId", id.toString())
 
         val groupList = arrayListOf<Int>()
         val friendList = arrayListOf<Int>()
-        if (isGroup){
+        if (isGroup) {
             groupList.add(id.toInt())
-        }else{
+        } else {
             friendList.add(id.toInt())
         }
+        if (myLocation.isNullOrEmpty()) {
+            Toast.makeText(this, "Please turn on your location", Toast.LENGTH_SHORT).show()
+        } else {
             val currentUser = mAuth.currentUser
             val jsonObject = JSONObject()
             jsonObject.put("friends", friendList)
             jsonObject.put("groups", groupList)
             jsonObject.put("phone", currentUser?.phoneNumber)
+            jsonObject.put("location", myLocation)
 
-            val file = File(recordedVideoPath)//ImagePickerUtils.getFilePathFromURI(this, Uri.parse(recordedVideoPath)))
+            val file =
+                File(recordedVideoPath)//ImagePickerUtils.getFilePathFromURI(this, Uri.parse(recordedVideoPath)))
             mViewModel.sendVideo(jsonObject, file)
+        }
+
 
     }
 

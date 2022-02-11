@@ -2,6 +2,7 @@ package com.citypeople.project.adapters.utils
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -85,7 +86,7 @@ class PlayerViewAdapter {
 
                 override fun onPlayerError(error: ExoPlaybackException) {
                     super.onPlayerError(error)
-                    this@loadVideo.context.toast("Oops! Error occurred while playing media.")
+                    //this@loadVideo.context.toast("Oops! Error occurred while playing media.")
                 }
 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
@@ -111,6 +112,12 @@ class PlayerViewAdapter {
                     if (playbackState == Player.STATE_READY && player.playWhenReady){
                         // [PlayerView] has started playing/resumed the video
                         callback.onStartedPlaying(player)
+                    }
+
+                    if (playbackState == Player.STATE_ENDED){
+                        //player back ended
+                        Log.e("Finished video", Player.STATE_ENDED.toString())
+                        callback.onFinishedPlaying(player)
                     }
                 }
             })

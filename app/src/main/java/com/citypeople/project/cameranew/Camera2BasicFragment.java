@@ -87,7 +87,7 @@ import androidx.legacy.app.FragmentCompat;
 import com.citypeople.project.Constants;
 import com.citypeople.project.GetAddressIntentService;
 import com.citypeople.project.R;
-import com.citypeople.project.storyvideo.StoryVideoActivity;
+import com.citypeople.project.views.StoryVideoActivity;
 import com.citypeople.project.views.FriendActivity;
 import com.citypeople.project.views.GroupActivity;
 import com.citypeople.project.views.VideoSendActivity;
@@ -451,6 +451,7 @@ public class Camera2BasicFragment extends Fragment
 
     };
     private Uri mVideoPath;
+    private String currentLoc;
 
     /**
      * Shows a {@link Toast} on the UI thread.
@@ -604,7 +605,7 @@ public class Camera2BasicFragment extends Fragment
             }
         };
         startLocationUpdates();
-        long duration = 30 * 1000;
+        long duration = 10 * 1000;
 
         linearTimer = new LinearTimer.Builder()
                 .linearTimerView(linearTimerView)
@@ -638,8 +639,14 @@ public class Camera2BasicFragment extends Fragment
         });
 
         imgChat.setOnClickListener(view1 -> {
-            Intent i = new Intent(getActivity(), StoryVideoActivity.class);
-            startActivity(i);
+            if (currentLoc==null) {
+                Toast.makeText(getContext(), "Please turn on your location", Toast.LENGTH_SHORT).show();
+            } else {
+                Intent i = new Intent(getActivity(), StoryVideoActivity.class);
+                i.putExtra("currentLocation", currentLoc);
+                startActivity(i);
+            }
+
         });
 
         WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
@@ -683,14 +690,13 @@ public class Camera2BasicFragment extends Fragment
             if (pEvent.getAction() == MotionEvent.ACTION_UP) {
                 // We're only interested in anything if our speak button is currently pressed.
                 if (isSpeakButtonLongPressed) {
-
                     Log.d("things called", "onTouch");
-                    stopRecordingVideo();
-                    linearTimer.pauseTimer();
-                    linearTimer.resetTimer();
                     startRecordingcalled = false;
                     // Do something when the button is released.
                     isSpeakButtonLongPressed = false;
+                    linearTimer.pauseTimer();
+                    linearTimer.resetTimer();
+                    stopRecordingVideo();
                 }
             }
             return false;
@@ -725,14 +731,14 @@ public class Camera2BasicFragment extends Fragment
             if (pEvent.getAction() == MotionEvent.ACTION_UP) {
                 // We're only interested in anything if our speak button is currently pressed.
                 if (isSpeakButtonLongPressed) {
-
                     Log.d("things called", "onTouch");
-                    stopRecordingVideo();
-                    linearTimerback.pauseTimer();
-                    linearTimerback.resetTimer();
                     startRecordingcalled = false;
                     // Do something when the button is released.
                     isSpeakButtonLongPressed = false;
+                    linearTimerback.pauseTimer();
+                    linearTimerback.resetTimer();
+
+                    stopRecordingVideo();
                 }
             }
             return false;
@@ -1492,14 +1498,19 @@ public class Camera2BasicFragment extends Fragment
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void animationComplete() {
+        try {
+            Log.d("things called", "onTouch");
+            startRecordingcalled = false;
+            // Do something when the button is released.
+            isSpeakButtonLongPressed = false;
+            linearTimer.resetTimer();
+            linearTimerback.resetTimer();
+            stopRecordingVideo();
+        }catch (Exception e){
+            e.printStackTrace();
+            stopRecordingVideo();
+        }
 
-        Log.d("things called", "onTouch");
-        stopRecordingVideo();
-        linearTimer.resetTimer();
-        linearTimerback.resetTimer();
-        startRecordingcalled = false;
-        // Do something when the button is released.
-        isSpeakButtonLongPressed = false;
     }
 
     @Override
@@ -1814,10 +1825,18 @@ public class Camera2BasicFragment extends Fragment
     private void startVideoCompress(String videoPath) {
         Log.w("startVideoCompress", videoPath);
         String uri = Uri.parse(videoPath).toString();
-        Intent i = new Intent(getContext(), VideoSendActivity.class).putExtra(Constants.INTENT_DATA, uri);
-        startActivity(i);
+        if (currentLoc==null) {
+            Toast.makeText(getContext(), "Please turn on your location", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent i = new Intent(getContext(), VideoSendActivity.class);
+            i.putExtra(Constants.INTENT_DATA, uri);
+            i.putExtra("currentLocation", currentLoc);
+            startActivity(i);
+        }
+
 
     }
+
 
     private void showProgress() {
         if (mProgressDialog == null) {
@@ -1965,7 +1984,8 @@ public class Camera2BasicFragment extends Fragment
     }
 
     private void showResults(String currentAdd) {
-        currentLocation.setText(currentAdd);
+        currentLoc = currentAdd;
+        currentLocation.setText(currentLoc);
     }
 
 }

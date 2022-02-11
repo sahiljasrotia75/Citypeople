@@ -34,7 +34,7 @@
             android:label="@string/title_activity_fullscreen"
             android:theme="@style/Theme.MyProject.Fullscreen" />
         <activity
-            android:name=".storyvideo.StoryVideoActivity"
+            android:name=".views.StoryVideoActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".HomeActivity"

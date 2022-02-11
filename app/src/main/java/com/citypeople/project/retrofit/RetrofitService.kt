@@ -5,8 +5,6 @@ import com.citypeople.project.models.signin.FriendResponse
 import com.citypeople.project.models.signin.StoryDataResponse
 import com.citypeople.project.models.signin.UserResponse
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import org.json.JSONObject
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -43,10 +41,13 @@ interface RetrofitService {
 
     @Multipart
     @POST("videos/upload")
-    suspend fun sendVideo(@Query("friends[]") friends: ArrayList<Int>,
-                          @Query("groups[]") groups: ArrayList<Int>,
-                          @Query("phone") phone: String,
-                          @Part video: MultipartBody.Part): Response<FriendResponse>
+    suspend fun sendVideo(
+        @Query("friends[]") friends: ArrayList<Int>,
+        @Query("groups[]") groups: ArrayList<Int>,
+        @Query("phone") phone: String,
+        @Query("location") location: String,
+        @Part video: MultipartBody.Part
+    ): Response<FriendResponse>
 
     @FormUrlEncoded
     @POST("videos")

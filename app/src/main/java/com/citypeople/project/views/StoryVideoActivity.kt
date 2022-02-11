@@ -1,4 +1,4 @@
-package com.citypeople.project.storyvideo
+package com.citypeople.project.views
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -6,9 +6,7 @@ import android.annotation.TargetApi
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.*
@@ -38,10 +36,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
-import com.citypeople.project.Constants
-import com.citypeople.project.HomeActivity
 import com.citypeople.project.R
 import com.citypeople.project.adapters.StoryRecyclerAdapter
+import com.citypeople.project.adapters.utils.OnSwipeTouchListener
 import com.citypeople.project.adapters.utils.PlayerViewAdapter
 import com.citypeople.project.adapters.utils.RecyclerViewScrollListener
 import com.citypeople.project.cameranew.AutoFitTextureView
@@ -53,7 +50,6 @@ import com.citypeople.project.models.signin.MediaObject
 import com.citypeople.project.models.signin.StoryModel
 import com.citypeople.project.retrofit.Status
 import com.citypeople.project.viewmodel.StoryViewModel
-import com.citypeople.project.views.VideoSendActivity
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.firebase.auth.FirebaseAuth
 import com.kaopiz.kprogresshud.KProgressHUD
@@ -100,6 +96,7 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
     val mViewModel by viewModel<StoryViewModel>()
     lateinit var mAuth: FirebaseAuth
     private var currentLocation: TextView? = null
+
     //for the Corner Camera
     private var preview: SurfaceView? = null
     private var camera: Camera? = null
@@ -114,10 +111,12 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
 
     //private var stories: ArrayList<StoryModel>? = arrayListOf()
     private val stories = mutableListOf<StoryModel>()
-
+    private val lastVisibleItemPosition: Int
+        get() = layoutManager.findLastVisibleItemPosition()
     private var recyclerView: RecyclerView? = null
     private var mAdapter: StoryRecyclerAdapter? = null
     private val modelList: ArrayList<MediaObject> = ArrayList<MediaObject>()
+    var myLocation: String? = ""
 
     // for handle scroll and get first visible item index
     private lateinit var scrollListener: RecyclerViewScrollListener
@@ -559,6 +558,7 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
         //setContentView(R.layout.fragment_video_new)
         initViews()
         mAuth = FirebaseAuth.getInstance()
+        extractIntent()
         setAdapter()
         apiObservers()
 
@@ -602,7 +602,7 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
             onBackPressed()
         }
 
-        val duration = (30 * 1000).toLong()
+        val duration = (10 * 1000).toLong()
 
         linearTimer = LinearTimer.Builder()
             .linearTimerView(linearTimerView)
@@ -625,18 +625,89 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
             switchCameraBack()
         }
 
+
+        bindingObject.mainRelative.setOnTouchListener(object : OnSwipeTouchListener(this) {
+            override fun onSwipeLeft() {
+                super.onSwipeLeft()
+                Log.e("onLeftSwipe", "onLeft")
+            }
+
+            override fun onSwipeRight() {
+                super.onSwipeRight()
+                Log.e("onRightSwipe", "onRight")
+            }
+        })
+
         bindingObject.viewLeft.setOnClickListener {
             if (layoutManager.findFirstVisibleItemPosition() > 0) {
-                recyclerView?.smoothScrollToPosition(layoutManager.findFirstVisibleItemPosition() - 1)
+                //   recyclerView?.smoothScrollToPosition(layoutManager.findFirstVisibleItemPosition() - 1)
+                var jumpTo = -2
+                val arrayUserId = arrayListOf<Int>()
+                val currentUserIdIndex = bindingObject.feedsMediaRv.findFirstVisibleItemPosition()
+
+                if (currentUserIdIndex == RecyclerView.NO_POSITION) {
+                    Toast.makeText(this, "There is no story", Toast.LENGTH_SHORT).show()
+                } else {
+                    stories[currentUserIdIndex].user_id
+                    arrayUserId.addAll(listOf(stories[currentUserIdIndex].user_id))
+                    Log.e("currentUserIdIndex", currentUserIdIndex.toString())
+                    stories.forEachIndexed { index, storyModel ->
+                        if (index < currentUserIdIndex && stories[currentUserIdIndex].user_id != stories[index].user_id) {
+                            jumpTo = index
+                        }
+                    }
+
+                    if (jumpTo >= 0) {
+                        recyclerView?.smoothScrollToPosition(jumpTo)
+                    } else {
+                        finish()
+                    }
+
+                }
             } else {
                 recyclerView?.smoothScrollToPosition(0)
             }
         }
 
-        bindingObject.viewRight.setOnClickListener {
-            recyclerView?.smoothScrollToPosition(layoutManager.findLastVisibleItemPosition() + 1)
 
+        bindingObject.viewRight.setOnClickListener {
+            // recyclerView?.smoothScrollToPosition(layoutManager.findLastVisibleItemPosition() + 1)
+
+            var jumpTo = -2
+            val arrayUserId = arrayListOf<Int>()
+            val currentUserIdIndex = bindingObject.feedsMediaRv.findFirstVisibleItemPosition()
+
+            if (currentUserIdIndex == RecyclerView.NO_POSITION) {
+                Toast.makeText(this, "There is no story", Toast.LENGTH_SHORT).show()
+            } else {
+                stories[currentUserIdIndex].user_id
+                arrayUserId.addAll(listOf(stories[currentUserIdIndex].user_id))
+
+                Log.e("currentUserIdIndex", currentUserIdIndex.toString())
+                stories.forEachIndexed { index, storyModel ->
+                    if (index > currentUserIdIndex && jumpTo == -2 && stories[currentUserIdIndex].user_id != stories[index].user_id) {
+                        jumpTo = index
+                    }
+                }
+
+                if (jumpTo >= 0) {
+                    recyclerView?.smoothScrollToPosition(jumpTo)
+                } else {
+                    finish()
+                }
+
+            }
         }
+
+    }
+
+    private fun extractIntent() {
+        if (intent.extras?.containsKey("currentLocation") == false) return
+
+        if (intent.extras?.containsKey("currentLocation") == true)
+            myLocation = intent.extras?.getString("currentLocation")
+        Log.e("MyLocation", myLocation.toString())
+
 
     }
 
@@ -654,12 +725,12 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
                     } ?: Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
                 }
                 Status.SUCCESS -> {
+
                     hideProgress()
                     it.data?.apply {
                         it.data?.videos?.let { p ->
                             stories?.addAll(it.data.videos)
                             if (stories != null && stories?.isNotEmpty()) {
-                                stories.reverse()
                                 mAdapter?.updateList(stories)
 
                             } else {
@@ -676,7 +747,7 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
 
         mViewModel.sendVideo?.observe(this, Observer {
             when (it.status) {
-                Status.LOADING ->   showProgress()
+                Status.LOADING -> showProgress()
                 Status.ERROR -> {
                     hideProgress()
                     it.message?.let { msg ->
@@ -691,7 +762,7 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
                             "Video send successfully",
                             Toast.LENGTH_SHORT
                         ).show()
-                       // finish()
+                        // finish()
                     } else {
                         Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
                     }
@@ -777,18 +848,51 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
         snapHelper.attachToRecyclerView(recyclerView!!)
 
         scrollListener = object : RecyclerViewScrollListener() {
+            override fun onScrollStateChanged(recycler: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recycler, newState)
+                if (!recyclerView!!.canScrollHorizontally(1)) {
+                    //function that add new elements to my recycler view
+                    var jumpTo = -2
+                    val arrayUserId = arrayListOf<Int>()
+                    val currentUserIdIndex =
+                        bindingObject.feedsMediaRv.findFirstVisibleItemPosition()
+                    if (currentUserIdIndex == RecyclerView.NO_POSITION) {
+                        Toast.makeText(applicationContext, "There is no story", Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        stories[currentUserIdIndex].user_id
+                        arrayUserId.addAll(listOf(stories[currentUserIdIndex].user_id))
+
+                        Log.e("currentUserIdIndex", currentUserIdIndex.toString())
+                        stories.forEachIndexed { index, storyModel ->
+                            if (index > currentUserIdIndex && jumpTo == -2 && stories[currentUserIdIndex].user_id != stories[index].user_id) {
+                                jumpTo = index
+                            }
+                        }
+
+                        if (jumpTo >= 0) {
+                            recyclerView?.smoothScrollToPosition(jumpTo)
+                        } else {
+                            // finish()
+                        }
+                    }
+                }
+            }
+
             override fun onItemIsFirstVisibleItem(index: Int) {
-                Log.d("visible item index", index.toString())
-                // play just visible item
-                if (index != -1)
+                Log.e("visible item index", index.toString())
+                if (index != -1) {
+                    // play just visible item
                     PlayerViewAdapter.playIndexThenPausePreviousPlayer(index)
+                }
+
             }
 
         }
         recyclerView!!.addOnScrollListener(scrollListener)
         mAdapter!!.SetOnItemClickListener(object : StoryRecyclerAdapter.OnItemClickListener {
             override fun onItemClick(view: View?, position: Int, model: StoryModel?) {
-                //Log.e("userId",model?.user_id.toString())
+                Log.e("userId", model?.user_id.toString())
             }
         })
     }
@@ -858,6 +962,7 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
             reopenCamera()
         }
     }
+
     /**
      * Sets up member variables related to camera.
      *
@@ -947,13 +1052,13 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     mPreviewSize?.let {
                         mTextureView!!.setAspectRatio(
-                            it.getWidth(), mPreviewSize!!.getHeight()
+                            it.width, mPreviewSize!!.height
                         )
                     }
                 } else {
                     mPreviewSize?.let {
                         mTextureView!!.setAspectRatio(
-                            it.getHeight(), mPreviewSize!!.getWidth()
+                            it.height, mPreviewSize!!.width
                         )
                     }
                 }
@@ -1026,8 +1131,8 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 mPreviewSize?.let {
                     mTextureView!!.setAspectRatio(
-                        it.getWidth(),
-                        mPreviewSize!!.getHeight()
+                        it.width,
+                        mPreviewSize!!.height
                     )
                 }
             } else {
@@ -1495,7 +1600,7 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
     }
 
     override fun onTimerReset() {
-      //  time!!.text = ""
+        //  time!!.text = ""
     }
 
 
@@ -1799,21 +1904,31 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
         val uri = Uri.parse(videoPath).toString()
         val arrayUserId = arrayListOf<Int>()
         val groupList = arrayListOf<Int>()
-        val index =  bindingObject.feedsMediaRv.findFirstVisibleItemPosition()
-        stories[index].user_id
-        arrayUserId.addAll(listOf(stories[index].user_id))
+        val index = bindingObject.feedsMediaRv.findFirstVisibleItemPosition()
+        if (index == RecyclerView.NO_POSITION) {
+            Toast.makeText(this, "Could not reply.There is no story", Toast.LENGTH_SHORT).show()
+        } else {
+            if (myLocation.isNullOrEmpty()) {
+                Toast.makeText(this, "Please turn on your location", Toast.LENGTH_SHORT).show()
+            } else {
+                stories[index].user_id
+                arrayUserId.addAll(listOf(stories[index].user_id))
+                val currentUser = mAuth.currentUser
+                val jsonObject = JSONObject()
+                jsonObject.put("friends", arrayUserId)
+                jsonObject.put("groups", groupList)
+                jsonObject.put("phone", currentUser?.phoneNumber)
+                jsonObject.put("location", myLocation)
+                val file =
+                    File(uri)//ImagePickerUtils.getFilePathFromURI(this, Uri.parse(recordedVideoPath)))
+                mViewModel.sendVideo(jsonObject, file)
+            }
 
-        val currentUser = mAuth.currentUser
-        val jsonObject = JSONObject()
-        jsonObject.put("friends", arrayUserId)
-        jsonObject.put("groups", groupList)
-        jsonObject.put("phone", currentUser?.phoneNumber)
-        val file = File(uri)//ImagePickerUtils.getFilePathFromURI(this, Uri.parse(recordedVideoPath)))
-        mViewModel.sendVideo(jsonObject, file)
+        }
+
 //        val i = Intent(this, VideoSendActivity::class.java).putExtra(Constants.INTENT_DATA, uri)
 //        startActivity(i)
     }
-
 
 
     /**

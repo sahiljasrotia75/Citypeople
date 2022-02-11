@@ -204,19 +204,19 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
     }
 
 
-    private fun setAdapter() {
-        bindingObj.rvContactList.layoutManager = LinearLayoutManager(this)
-        mFriendAdapter = FriendAdapter(this)
-        bindingObj.rvContactList.adapter = mFriendAdapter
-        mFriendAdapter.clearList()
-       // mFriendAdapter.setDataList(aa.toMutableList())
-        bindingObj.rvContactList.addItemDecoration(
-            DividerItemDecoration(
-                this,
-                DividerItemDecoration.VERTICAL
+        private fun setAdapter() {
+            bindingObj.rvContactList.layoutManager = LinearLayoutManager(this)
+            mFriendAdapter = FriendAdapter(this)
+            bindingObj.rvContactList.adapter = mFriendAdapter
+            mFriendAdapter.clearList()
+           // mFriendAdapter.setDataList(aa.toMutableList())
+            bindingObj.rvContactList.addItemDecoration(
+                DividerItemDecoration(
+                    this,
+                    DividerItemDecoration.VERTICAL
+                )
             )
-        )
-    }
+        }
 
 
     @SuppressLint("Range")

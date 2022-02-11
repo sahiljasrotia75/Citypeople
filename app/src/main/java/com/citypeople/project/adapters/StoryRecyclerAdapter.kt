@@ -1,6 +1,7 @@
 package com.citypeople.project.adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -107,5 +108,6 @@ class StoryRecyclerAdapter(
     }
 
     override fun onFinishedPlaying(player: Player) {
+        Log.e("Finished video",player.toString())
     }
 }

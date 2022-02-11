@@ -31,7 +31,7 @@ import com.abedelazizshe.lightcompressorlibrary.VideoQuality
 import com.abedelazizshe.lightcompressorlibrary.config.Configuration*/
 import com.citypeople.project.Constants
 import com.citypeople.project.R
-import com.citypeople.project.storyvideo.StoryVideoActivity
+import com.citypeople.project.views.StoryVideoActivity
 import com.citypeople.project.views.FriendActivity
 import com.citypeople.project.views.GroupActivity
 import com.citypeople.project.views.VideoSendActivity

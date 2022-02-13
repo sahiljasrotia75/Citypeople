@@ -944,7 +944,6 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
         }
     }
 
-
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     private fun switchCameraBack() {
         if (mCameraLensFacingDirection != 1) {
@@ -1641,8 +1640,6 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
             }
         }
     }
-
-    //for video
 
 
     //for video

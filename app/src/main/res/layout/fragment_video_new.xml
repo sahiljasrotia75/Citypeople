@@ -32,8 +32,6 @@
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            timer:cardCornerRadius="@dimen/_16sdp"
-
             android:elevation="@dimen/_50sdp"
             android:layout_height="wrap_content">
 
@@ -278,7 +276,6 @@
                         android:layout_width="@dimen/_80sdp"
                         android:layout_height="@dimen/_120sdp"
                         android:layout_marginHorizontal="@dimen/_8sdp"
-                        app:cardCornerRadius="@dimen/_10sdp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent">

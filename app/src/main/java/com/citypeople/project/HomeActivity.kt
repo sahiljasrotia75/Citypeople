@@ -55,38 +55,13 @@ class HomeActivity : AppCompatActivity() {
         mFriendId = intent.extras?.getInt(Constants.INTENT_DATA, 0) ?: 0
     }
 
-    open fun preventStatusBarExpansion (context: Context) {
-        try {
-            val manager = context.applicationContext
-                .getSystemService (Context.WINDOW_SERVICE) as WindowManager
-            val activity = context as Activity
-            val lp = WindowManager.LayoutParams()
-            lp.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR
-            lp.gravity = Gravity.TOP
-            lp.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-            lp.width = WindowManager.LayoutParams.MATCH_PARENT
-            val resId = this.resources.getIdentifier("status_bar_height", "dimen", "android")
-            var result = 0
-            if (resId < 0)
-                result = resources.getDimensionPixelSize(resId)
-
-            lp.height = result
-            lp.format = PixelFormat.TRANSPARENT
-            val view = CustomViewGroup(this)
-            manager.addView(view, lp)
-
-        } catch (er: Exception){
-
-        }
-    }
-
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        showFullscreenFlag()
-        if (hasFocus)
-            hideSystemUI()
+      //  showFullscreenFlag()
+        if (hasFocus){
+         //   hideSystemUI()
+        }
+
     }
 
     fun hideSystemUI(){

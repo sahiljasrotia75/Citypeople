@@ -176,19 +176,6 @@
                 app:layout_constraintVertical_bias="1.0" />
 
 
-            <EditText
-                android:id="@+id/tokenId"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_marginVertical="@dimen/_12sdp"
-                android:background="@null"
-                android:fontFamily="@font/poppins_regular"
-                android:gravity="center"
-                android:textColor="@color/black_light"
-                android:textSize="@dimen/_15sdp" />
-
-
         </LinearLayout>
     </ScrollView>
 </layout>

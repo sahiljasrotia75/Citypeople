@@ -13,7 +13,7 @@ import com.citypeople.project.utilities.common.BaseViewModel
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
-class FriendViewModel(private val authRepo: AuthRepo): BaseViewModel(){
+class FriendViewModel(private val authRepo: AuthRepo): BaseViewModel() {
     private val _contactsList= MutableLiveData<Resources<ContactsResponse>>()
     var contactsList: LiveData<Resources<ContactsResponse>>?=_contactsList
 

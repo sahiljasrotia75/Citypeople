@@ -1,5 +1,6 @@
 package com.citypeople.project.viewmodel
 
+import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -15,7 +16,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.File
 
-class StoryViewModel(private val authRepo: AuthRepo) : BaseViewModel() {
+ class StoryViewModel(var authRepo :AuthRepo) : BaseViewModel() {
     private val _storyList = MutableLiveData<Resources<StoryDataResponse>>()
     var storyList: LiveData<Resources<StoryDataResponse>>? = _storyList
 

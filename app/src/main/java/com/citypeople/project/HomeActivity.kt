@@ -15,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.citypeople.project.cameranew.Camera2BasicFragment
 import com.google.firebase.auth.FirebaseAuth
 import androidx.core.view.WindowInsetsControllerCompat
+import com.citypeople.project.cameranew.Camera2BasicFragmentKt
 import com.citypeople.project.views.CustomViewGroup
 
 
@@ -42,9 +43,11 @@ class HomeActivity : AppCompatActivity() {
         extractIntent()
 
         if (null == savedInstanceState) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container, Camera2BasicFragment.newInstance())
-                .commit()
+            Camera2BasicFragmentKt.newInstance()?.let {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.container, it)
+                    .commit()
+            }
         }
     }
 

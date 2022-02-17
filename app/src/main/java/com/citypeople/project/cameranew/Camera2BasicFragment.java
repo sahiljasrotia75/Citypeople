@@ -16,6 +16,8 @@
 
 package com.citypeople.project.cameranew;
 
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -83,10 +85,18 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.legacy.app.FragmentCompat;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.citypeople.project.Constants;
 import com.citypeople.project.GetAddressIntentService;
 import com.citypeople.project.R;
+import com.citypeople.project.adapters.UserPostMediaAdapter;
+import com.citypeople.project.models.signin.StoryModel;
+import com.citypeople.project.retrofit.Status;
+import com.citypeople.project.viewmodel.StoryViewModel;
 import com.citypeople.project.views.StoryVideoActivity;
 import com.citypeople.project.views.FriendActivity;
 import com.citypeople.project.views.GroupActivity;
@@ -96,7 +106,12 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.kaopiz.kprogresshud.KProgressHUD;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -107,6 +122,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Observer;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -115,7 +131,7 @@ import io.github.krtkush.lineartimer.LinearTimerView;
 
 public class Camera2BasicFragment extends Fragment
         implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback,
-        FragmentCompat.OnRequestPermissionsResultCallback, LinearTimer.TimerListener {
+        FragmentCompat.OnRequestPermissionsResultCallback, LinearTimer.TimerListener, UserPostMediaAdapter.ProfileMediaItemListener {
 
     /**
      * Conversion from screen rotation to JPEG orientation.
@@ -149,6 +165,8 @@ public class Camera2BasicFragment extends Fragment
     private ImageView imgDelete;
     private ImageView imgChat;
     private ConstraintLayout mainConstraint1;
+    private FirebaseAuth mAuth;
+
     /**
      * Tag for the {@link Log}.
      */
@@ -169,7 +187,7 @@ public class Camera2BasicFragment extends Fragment
     ImageView pictureBack;
     private TextView currentLocation;
     boolean isSpeakButtonLongPressed;
-
+    private ArrayList<StoryModel> stories;
     KProgressHUD mProgressDialog;
 
     /**
@@ -244,6 +262,7 @@ public class Camera2BasicFragment extends Fragment
      */
     private AutoFitTextureView mTextureView;
     private LinearLayout blockView;
+    private RecyclerView rvUserList;
 
     private ImageView camera_flash;
     boolean startRecordingcalled = false;
@@ -251,7 +270,7 @@ public class Camera2BasicFragment extends Fragment
     private LinearTimer linearTimer;
     private LinearTimer linearTimerback;
     private TextView time;
-
+    private TextView emptyChatTv;
     private CameraCaptureSession mPreviewSession;
     /**
      * A {@link CameraCaptureSession } for camera preview.
@@ -452,6 +471,8 @@ public class Camera2BasicFragment extends Fragment
     };
     private Uri mVideoPath;
     private String currentLoc;
+    private UserPostMediaAdapter mAdapter;
+
 
     /**
      * Shows a {@link Toast} on the UI thread.
@@ -472,6 +493,8 @@ public class Camera2BasicFragment extends Fragment
 
     private String mNextVideoAbsolutePath;
     private CaptureRequest.Builder mPreviewBuilder;
+    public StoryViewModel mViewModel;
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private static Size chooseVideoSize(Size[] choices) {
@@ -570,6 +593,10 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         // GetPermission();
+     //   mViewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication())).get(StoryViewModel.class);
+
+      //  mViewModel = new ViewModelProvider(this).get(StoryViewModel.class);
+        mAuth = FirebaseAuth.getInstance();
 
         view.findViewById(R.id.picture).setOnClickListener(this);
         view.findViewById(R.id.pictureback).setOnClickListener(this);
@@ -579,7 +606,9 @@ public class Camera2BasicFragment extends Fragment
         LinearTimerView linearTimerView = view.findViewById(R.id.linearTimer);
         LinearTimerView linearTimerViewback = view.findViewById(R.id.linearTimerback);
         blockView = view.findViewById(R.id.blockView);
+        rvUserList = view.findViewById(R.id.rvVideoList);
         time = view.findViewById(R.id.time);
+        emptyChatTv = view.findViewById(R.id.emptyChatTv);
         picture = view.findViewById(R.id.picture);
         pictureBack = view.findViewById(R.id.pictureback);
         imgFriend = view.findViewById(R.id.img_friend);
@@ -639,7 +668,7 @@ public class Camera2BasicFragment extends Fragment
         });
 
         imgChat.setOnClickListener(view1 -> {
-            if (currentLoc==null) {
+            if (currentLoc == null) {
                 Toast.makeText(getContext(), "Please turn on your location", Toast.LENGTH_SHORT).show();
             } else {
                 Intent i = new Intent(getActivity(), StoryVideoActivity.class);
@@ -659,6 +688,49 @@ public class Camera2BasicFragment extends Fragment
         lp.height = display.getHeight() - (display.getWidth() * 16 / 9);
         blockView.requestLayout();
 
+    }
+
+    private void setAdapter() {
+        // added data from arraylist to adapter class.
+        mAdapter = new UserPostMediaAdapter(this);
+        // setting grid layout manager to implement grid view.
+        // in this method '2' represents number of columns to be displayed in grid view.
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
+        rvUserList.setHasFixedSize(true);
+        // at last set adapter to recycler view.
+        rvUserList.setLayoutManager(layoutManager);
+        rvUserList.setAdapter(mAdapter);
+    }
+
+    private void setObserver() {
+        mViewModel.getStoryList().observe(getViewLifecycleOwner(), item -> {
+            // Update the UI.
+            switch (item.getStatus()) {
+                case SUCCESS:
+                    hideProgress();
+                    if (item.getData() != null) {
+                        if (!item.getData().getVideos().isEmpty()) {
+                            stories.addAll(item.getData().getVideos());
+                            if (stories != null && !stories.isEmpty()) {
+                               // mAdapter.updateList(stories);
+                                emptyChatTv.setVisibility(View.GONE);
+                            } else {
+                                emptyChatTv.setVisibility(View.VISIBLE);
+                                Toast.makeText(getActivity(), "No Data", Toast.LENGTH_SHORT)
+                                        .show();
+                            }
+                        }
+                    }
+                    break;
+                case ERROR:
+                    hideProgress();
+                    Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                    break;
+                case LOADING:
+                    showProgress();
+                    break;
+            }
+        });
     }
 
     private View.OnLongClickListener recordHoldListener = new View.OnLongClickListener() {
@@ -1506,7 +1578,7 @@ public class Camera2BasicFragment extends Fragment
             linearTimer.resetTimer();
             linearTimerback.resetTimer();
             stopRecordingVideo();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             stopRecordingVideo();
         }
@@ -1528,6 +1600,21 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public void onTimerReset() {
         time.setText("");
+    }
+
+    @Override
+    public void onMediaThumbnailClick(int position) {
+
+    }
+
+    @Override
+    public void onMentionedUserClick(@NonNull String username) {
+
+    }
+
+    @Override
+    public void onEmptySearch(boolean b) {
+
     }
 
 
@@ -1825,7 +1912,7 @@ public class Camera2BasicFragment extends Fragment
     private void startVideoCompress(String videoPath) {
         Log.w("startVideoCompress", videoPath);
         String uri = Uri.parse(videoPath).toString();
-        if (currentLoc==null) {
+        if (currentLoc == null) {
             Toast.makeText(getContext(), "Please turn on your location", Toast.LENGTH_SHORT).show();
         } else {
             Intent i = new Intent(getContext(), VideoSendActivity.class);
@@ -1978,6 +2065,7 @@ public class Camera2BasicFragment extends Fragment
             /*if (resultCode == 1) {
                 Toast.makeText(getActivity(), "Address not found, ", Toast.LENGTH_SHORT).show();
             }*/
+
             String currentAdd = resultData.getString("address_result");
             showResults(currentAdd);
         }

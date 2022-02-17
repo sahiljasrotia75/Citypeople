@@ -61,11 +61,7 @@ class GroupListAdapter(var context: Context) :
     inner class ViewHolder(var bindingObj: GroupItemLayoutBinding) :
         androidx.recyclerview.widget.RecyclerView.ViewHolder(bindingObj.root)
 
-    interface FriendItemListener {
-        fun onSelectName(breed: String, breed_id: String, is_other: Boolean)
-        fun onEmptySearch(boolean: Boolean)
-        // fun setOtherFieldTextBreed(isOtherBreedText : String, petBreed: PetInfoEntity)
-    }
+
 
 }
 

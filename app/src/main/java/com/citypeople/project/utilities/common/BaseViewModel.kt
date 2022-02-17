@@ -1,12 +1,13 @@
 package com.citypeople.project.utilities.common
 
+import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
 
 
 
-open class BaseViewModel: ViewModel()
+open class BaseViewModel : ViewModel()
 {
     val loader: MutableLiveData<Boolean> = MutableLiveData()
     val message: MutableLiveData<String> = MutableLiveData()

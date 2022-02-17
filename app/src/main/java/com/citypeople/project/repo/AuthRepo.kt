@@ -1,6 +1,7 @@
 package com.citypeople.project.repo
 
 
+import android.app.Application
 import com.citypeople.project.models.signin.ContactsResponse
 import com.citypeople.project.models.signin.UserResponse
 import com.citypeople.project.retrofit.Resources
@@ -16,7 +17,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 
 
-class AuthRepo(private val retrofitService: RetrofitService) {
+class AuthRepo(private val retrofitService :RetrofitService) {
 
     suspend fun requestUser(data: HashMap<String, String>): Resources<UserResponse> {
         return safeApiCall {

@@ -10,7 +10,6 @@ import com.citypeople.project.retrofit.ErrorResponse
 import com.citypeople.project.retrofit.Resources
 import com.citypeople.project.utilities.common.BaseViewModel
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody

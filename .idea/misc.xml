@@ -21,6 +21,9 @@
         <entry key="..\:/AndroidStudioProjects/Zero2Unicorn/Kotlin/Citypeople/app/src/main/res/layout/layout_loader.xml" value="0.136" />
         <entry key="..\:/AndroidStudioProjects/Zero2Unicorn/Kotlin/Citypeople/app/src/main/res/layout/video_intro_item_layout.xml" value="0.136" />
         <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/drawable/green_outline.xml" value="0.25416666666666665" />
+        <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/drawable/ic_baseline_content_copy_24.xml" value="0.1" />
+        <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/drawable/ic_videocamera_icon.xml" value="0.18" />
+        <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/drawable/small_placeholder.xml" value="0.1" />
         <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/layout/activity_camera_preview.xml" value="0.23802083333333332" />
         <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/layout/activity_friend.xml" value="0.16" />
         <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/layout/activity_fullscreen.xml" value="0.14479166666666668" />
@@ -33,7 +36,7 @@
         <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/layout/activity_video_send.xml" value="0.23802083333333332" />
         <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/layout/create_post_media_item_layout.xml" value="0.10625" />
         <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/layout/exo_simple_player_view.xml" value="0.15885416666666666" />
-        <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/layout/fragment_camera_basic.xml" value="0.264" />
+        <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/layout/fragment_camera_basic.xml" value="0.25263157894736843" />
         <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/layout/fragment_vedio_intro.xml" value="0.15885416666666666" />
         <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/layout/fragment_video_new.xml" value="0.2" />
         <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/layout/friend_item_layout.xml" value="0.15729166666666666" />
@@ -41,6 +44,7 @@
         <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/layout/item_sticker_gridview.xml" value="0.15885416666666666" />
         <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/layout/layout_loader.xml" value="0.15885416666666666" />
         <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/layout/tiktok_timeline_item_recycler.xml" value="0.2" />
+        <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/layout/user_post_media_item_layout.xml" value="0.171875" />
         <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/layout/video_intro_item_layout.xml" value="0.23802083333333332" />
         <entry key="..\:/zero2unicorn_dev-city-people-android-08806f65eb93 (1)/zero2unicorn_dev-city-people-android-08806f65eb93/app/src/main/res/layout/video_send_item_layout.xml" value="0.15885416666666666" />
         <entry key="app/src/main/res/drawable/ic_outline_play_circle_outline_24.xml" value="0.12314814814814815" />

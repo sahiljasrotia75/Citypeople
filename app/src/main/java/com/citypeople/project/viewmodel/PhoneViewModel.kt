@@ -5,7 +5,7 @@ import androidx.lifecycle.Transformations
 import com.citypeople.project.utilities.FieldValidators
 import com.citypeople.project.utilities.common.BaseViewModel
 
-class PhoneViewModel: BaseViewModel(){
+class PhoneViewModel: BaseViewModel() {
 
     val phone = MutableLiveData<String>()
     val phoneError = Transformations.switchMap(phone, FieldValidators::phoneError)

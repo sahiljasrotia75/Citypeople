@@ -1,6 +1,7 @@
 package com.citypeople.project.utilities.extensions
 
 import android.R.anim
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.View
 import android.view.animation.Animation
@@ -8,6 +9,14 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
+import com.bumptech.glide.Glide
+import com.bumptech.glide.Glide.with
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.citypeople.project.R
+import com.citypeople.project.hide
+import com.citypeople.project.makeGone
+import com.citypeople.project.show
 import com.google.android.material.textfield.TextInputLayout
 
 import java.util.*
@@ -110,11 +119,38 @@ fun View.visibility(value: Boolean) {
 fun TextView.setTextFromData(res: Int) {
     text = res.toString()
 }
+@BindingAdapter("imageUrl","videoThumbnailUrl","playIcon","mediaType",requireAll = false)
+fun ImageView.feedMediaPost(imageUrl: String?,videoUrl:String?,playIcon:ImageView?,mediaType: String?) {
+    val thumbnail= videoUrl ?:run {
+        if (mediaType!="video")playIcon?.makeGone()
+        imageUrl
+    }
+    loadImage(this,thumbnail,mediaType=="gif")
+}
 
 
 
 
-
+@SuppressLint("CheckResult")
+fun loadImage(view: ImageView, url: String?, isUrlGif:Boolean?=null) {
+    if (url.isNullOrEmpty()) {
+        view.hide()
+    } else {
+        view.show()
+        val circularProgressDrawable = CircularProgressDrawable(view.context)
+        circularProgressDrawable.strokeWidth = 5f
+        circularProgressDrawable.centerRadius = 30f
+        //circularProgressDrawable.setColorSchemeColors(view.context.getColorFromAttr(R.attr.white_blue))
+        circularProgressDrawable.start()
+        val g = Glide.with(view.context)
+        isUrlGif?.let { if (it) g.asGif() }
+        val rb= g.load(url.toString())
+        rb.diskCacheStrategy(DiskCacheStrategy.ALL)
+            .placeholder(circularProgressDrawable)
+            .error(R.drawable.small_placeholder)
+            .into(view)
+    }
+}
 
 
 //}

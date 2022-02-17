@@ -28,6 +28,7 @@ class FriendAdapter(var listener: FriendItemListener) :
         this.mList.addAll(mList)
         this.nList.addAll(mList)
     }
+
     fun getCurrentItems():MutableList<User>{
         return mList
     }

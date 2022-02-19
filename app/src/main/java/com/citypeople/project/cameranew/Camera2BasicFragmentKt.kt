@@ -66,10 +66,12 @@ import java.io.IOException
 import java.util.*
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsResultCallback,
     FragmentCompat.OnRequestPermissionsResultCallback, LinearTimer.TimerListener,
-    ProfileMediaItemListener,UserListener {
+    ProfileMediaItemListener, UserListener {
 
     private val SENSOR_ORIENTATION_DEFAULT_DEGREES = 90
     private val SENSOR_ORIENTATION_INVERSE_DEGREES = 270
@@ -101,6 +103,8 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
     private var currentLocation: TextView? = null
     var isSpeakButtonLongPressed = false
     private val stories = mutableListOf<StoryModel>()
+    private val hashmapStories : HashMap<Int,MutableList<StoryModel>> = HashMap()
+    var listStories = mutableListOf<Int>()
     var mProgressDialog: KProgressHUD? = null
 
 
@@ -302,6 +306,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
     private lateinit var locationManager: LocationManager
     private lateinit var tvGpsLocation: TextView
     private val locationPermissionCode = 2
+
     /**
      * A [CameraCaptureSession.CaptureCallback] that handles events related to JPEG capture.
      */
@@ -456,8 +461,6 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
     }
 
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -587,9 +590,9 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
         } catch (e: JSONException) {
             e.printStackTrace()
         }
+        mAdapter?.clearList()
         mViewModel.stories(jsonObject)
     }
-
 
 
     private fun setAdapter() {
@@ -601,7 +604,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
             activity, 3
         )
         val spanCount = 3 //3 columns
-        val spacing =10//10 px
+        val spacing = 10//10 px
         val indulgeEdge = true
 
         rvUserList?.addItemDecoration(GridSpacingItemDecoration(spanCount, spacing, indulgeEdge))
@@ -609,8 +612,6 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
         // at last set adapter to recycler view.
         rvUserList?.layoutManager = layoutManager
         rvUserList?.adapter = mAdapter
-        mAdapter?.clearList()
-
     }
 
     private fun apiObservers() {
@@ -638,8 +639,21 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
                         it.data?.videos?.let { p ->
                             stories?.addAll(it.data.videos)
                             if (stories != null && stories?.isNotEmpty()) {
-                              //  mAdapter?.updateList(stories)
-                                mAdapter?.setDataList(stories.toMutableList())
+                                //  mAdapter?.updateList(stories)
+                                stories.forEach {
+                                    var listOfData: ArrayList<StoryModel> = ArrayList()
+                                    if (!hashmapStories.contains(it.user_id)) {
+                                        listOfData.add(it)
+                                        hashmapStories[it.user_id] = listOfData
+                                        listStories.add(it.user_id)
+                                    } else {
+                                        listOfData = (hashmapStories[it.user_id] as ArrayList<StoryModel>?)!!
+                                        listOfData.add(it)
+                                        hashmapStories[it.user_id] = listOfData
+                                    }
+                                }
+                              //  mAdapter?.clearList()
+                                mAdapter?.setDataList(listStories.toMutableList(),hashmapStories)
                                 mAdapter?.notifyDataSetChanged()
                                 emptyChatTv!!.visibility = View.GONE
                             } else {
@@ -668,6 +682,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
             isSpeakButtonLongPressed = true
             true
         }
+
     @SuppressLint("ClickableViewAccessibility")
     private val recordTouchListener = View.OnTouchListener { pView, pEvent ->
         pView.onTouchEvent(pEvent)
@@ -1470,7 +1485,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
         } else {
             val i = Intent(activity, StoryVideoActivity::class.java)
             i.putExtra("currentLocation", stories[position].location)
-          //  i.putExtra("currentLocation", stories[position].location)
+            //  i.putExtra("currentLocation", stories[position].location)
             startActivity(i)
         }
     }
@@ -1480,10 +1495,10 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
     }
 
     override fun onEmptySearch(boolean: Boolean) {
-       requireActivity().runOnUiThread {
-            if (boolean){
+        requireActivity().runOnUiThread {
+            if (boolean) {
                 _binding?.emptyChatTv?.makeVisible()
-            }else  _binding?.emptyChatTv?.makeGone()
+            } else _binding?.emptyChatTv?.makeGone()
         }
     }
 
@@ -1936,7 +1951,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
                 Toast.makeText(getActivity(), "Address not found, ", Toast.LENGTH_SHORT).show();
             }*/
             val currentAdd = resultData.getString("address_result")
-                currentAdd?.let { showResults(it) }
+            currentAdd?.let { showResults(it) }
         }
     }
 
@@ -1946,11 +1961,12 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
     }
 
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-        mAdapter?.filter?.filter(s.toString())
+     //   mAdapter?.filter?.filter(s.toString())
     }
 
 
 }
+
 interface UserListener {
     fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int)
 }

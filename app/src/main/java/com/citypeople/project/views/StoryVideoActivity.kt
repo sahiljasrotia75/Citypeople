@@ -43,7 +43,6 @@ import com.citypeople.project.adapters.utils.PlayerViewAdapter
 import com.citypeople.project.adapters.utils.RecyclerViewScrollListener
 import com.citypeople.project.cameranew.AutoFitTextureView
 import com.citypeople.project.cameranew.Camera2BasicFragment
-import com.citypeople.project.cameranew.Camera2BasicFragment.*
 import com.citypeople.project.databinding.FragmentVideoNewBinding
 import com.citypeople.project.findFirstVisibleItemPosition
 import com.citypeople.project.models.signin.MediaObject
@@ -55,7 +54,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.kaopiz.kprogresshud.KProgressHUD
 import io.github.krtkush.lineartimer.LinearTimer
 import io.github.krtkush.lineartimer.LinearTimerView
-import kotlinx.android.synthetic.main.fragment_video_new.*
 import org.json.JSONObject
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.io.File
@@ -117,6 +115,9 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
     private var mAdapter: StoryRecyclerAdapter? = null
     private val modelList: ArrayList<MediaObject> = ArrayList<MediaObject>()
     var myLocation: String? = ""
+    private var currentUserId: Int? = 0
+    private var currentId: Int? = 0
+    private var currentVideoIndex: Int = 0
 
     // for handle scroll and get first visible item index
     private lateinit var scrollListener: RecyclerViewScrollListener
@@ -702,13 +703,17 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
     }
 
     private fun extractIntent() {
+        val ii = intent
+        currentId = ii.getIntExtra("id", 0)?:0
+        currentUserId = ii.getIntExtra("userId", 0)?:0
         if (intent.extras?.containsKey("currentLocation") == false) return
 
-        if (intent.extras?.containsKey("currentLocation") == true)
+        if (intent.extras?.containsKey("currentLocation") == true){
             myLocation = intent.extras?.getString("currentLocation")
-        Log.e("MyLocation", myLocation.toString())
+            Log.e("MyLocation", myLocation.toString())
+        } else {
 
-
+        }
     }
 
 
@@ -731,6 +736,14 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
                         it.data?.videos?.let { p ->
                             stories?.addAll(it.data.videos)
                             if (stories != null && stories?.isNotEmpty()) {
+
+                                stories.forEachIndexed { index, storyModel ->
+                                    if (currentId == stories[index].id) {
+                                         currentVideoIndex = index
+                                        Log.e("currentVideoIndex", currentVideoIndex.toString())
+                                    }
+                                }
+                                recyclerView?.smoothScrollToPosition(currentVideoIndex)
                                 mAdapter?.updateList(stories)
 
                             } else {
@@ -782,6 +795,8 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
             if (!startRecordingcalled) {
                 startRecordingVideo()
                 linearTimer!!.startTimer()
+                bindingObject.strokeView.visibility=View.VISIBLE
+
             }
             isSpeakButtonLongPressed = true
             true
@@ -798,6 +813,8 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
                 stopRecordingVideo()
                 linearTimer!!.pauseTimer()
                 linearTimer!!.resetTimer()
+                bindingObject.strokeView.visibility=View.GONE
+
                 startRecordingcalled = false
                 // Do something when the button is released.
                 isSpeakButtonLongPressed = false
@@ -812,6 +829,7 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
             if (!startRecordingcalled) {
                 startRecordingVideo()
                 linearTimerback!!.startTimer()
+                bindingObject.strokeView.visibility=View.VISIBLE
             }
             isSpeakButtonLongPressed = true
             true
@@ -828,6 +846,8 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
                 stopRecordingVideo()
                 linearTimerback!!.pauseTimer()
                 linearTimerback!!.resetTimer()
+                bindingObject.strokeView.visibility=View.GONE
+
                 startRecordingcalled = false
                 // Do something when the button is released.
                 isSpeakButtonLongPressed = false
@@ -880,7 +900,9 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
             }
 
             override fun onItemIsFirstVisibleItem(index: Int) {
+
                 Log.e("visible item index", index.toString())
+
                 if (index != -1) {
                     // play just visible item
                     PlayerViewAdapter.playIndexThenPausePreviousPlayer(index)
@@ -1582,6 +1604,8 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
         stopRecordingVideo()
         linearTimer!!.resetTimer()
         linearTimerback!!.resetTimer()
+        bindingObject.strokeView.visibility=View.GONE
+
         startRecordingcalled = false
         // Do something when the button is released.
         isSpeakButtonLongPressed = false
@@ -1954,7 +1978,7 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
             val activity: Activity? = activity
             return AlertDialog.Builder(activity)
-                .setMessage(arguments!!.getString(ARG_MESSAGE))
+                .setMessage(requireArguments().getString(ARG_MESSAGE))
                 .setPositiveButton(
                     android.R.string.ok
                 ) { dialogInterface, i -> activity!!.finish() }

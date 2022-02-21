@@ -77,6 +77,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
@@ -110,6 +111,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -121,6 +123,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Observer;
 import java.util.concurrent.Semaphore;
@@ -1602,10 +1605,7 @@ public class Camera2BasicFragment extends Fragment
         time.setText("");
     }
 
-    @Override
-    public void onMediaThumbnailClick(int position) {
 
-    }
 
     @Override
     public void onMentionedUserClick(@NonNull String username) {
@@ -1614,6 +1614,13 @@ public class Camera2BasicFragment extends Fragment
 
     @Override
     public void onEmptySearch(boolean b) {
+
+    }
+
+
+
+    @Override
+    public void onMediaThumbnailClick(int position, @Nullable StoryModel storyModel) {
 
     }
 

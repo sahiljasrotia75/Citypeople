@@ -9,12 +9,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.citypeople.project.R
 import com.citypeople.project.databinding.UserPostMediaItemLayoutBinding
-import com.citypeople.project.hide
 import com.citypeople.project.models.signin.StoryModel
-import com.citypeople.project.models.signin.User
 import com.citypeople.project.show
-import com.citypeople.project.utilities.extensions.MediaConstants
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -26,9 +22,9 @@ class UserPostMediaAdapter(
 
     private var toMutableList: MutableList<Int> = ArrayList()
     private var mhashmapStories: HashMap<Int, MutableList<StoryModel>> = HashMap()
-    // private var  nhashmapStories: HashMap<Int, MutableList<StoryModel>> = HashMap()
 
     fun clearList() {
+        this.toMutableList.clear()
         this.mhashmapStories.clear()
         // this.nList.clear()
     }
@@ -60,13 +56,12 @@ class UserPostMediaAdapter(
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, pos: Int) {
         Log.d("position", pos.toString())
         if (viewHolder is ViewHolder) {
-            viewHolder.setIsRecyclable(false)
             viewHolder.bindingObj.bindingObj = mhashmapStories[toMutableList[pos]]?.get(0)
             viewHolder.bindingObj.executePendingBindings()
-            viewHolder.itemView.setOnClickListener { listener.onMediaThumbnailClick(position = pos) }
-
+            viewHolder.itemView.setOnClickListener { listener.onMediaThumbnailClick(position = pos,mhashmapStories[toMutableList[pos]]?.get(0))}
             val contentList = mhashmapStories[toMutableList[pos]]
             val size = contentList?.size
+
             if (size == 1){
                 viewHolder.bindingObj.mediaBtn.show()
                 viewHolder.bindingObj.mediaBtn.setImageResource(R.drawable.ic_videocamera_icon)
@@ -124,10 +119,9 @@ class UserPostMediaAdapter(
         androidx.recyclerview.widget.RecyclerView.ViewHolder(bindingObj.root)
 
     interface ProfileMediaItemListener {
-        fun onMediaThumbnailClick(position: Int)
+        fun onMediaThumbnailClick(position: Int, storyModel: StoryModel?)
         fun onMentionedUserClick(username: String)
         fun onEmptySearch(boolean: Boolean)
-
     }
 
     override fun getFilter(): Filter {

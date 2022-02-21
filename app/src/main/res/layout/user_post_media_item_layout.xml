@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/apk/res-auto">
     <data>
+
         <variable
             name="bindingObj"
             type="com.citypeople.project.models.signin.StoryModel"/>

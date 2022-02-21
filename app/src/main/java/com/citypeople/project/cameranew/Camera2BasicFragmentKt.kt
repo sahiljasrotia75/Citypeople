@@ -31,7 +31,6 @@ import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -103,7 +102,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
     private var currentLocation: TextView? = null
     var isSpeakButtonLongPressed = false
     private val stories = mutableListOf<StoryModel>()
-    private val hashmapStories : HashMap<Int,MutableList<StoryModel>> = HashMap()
+    private val hashmapStories: HashMap<Int, MutableList<StoryModel>> = HashMap()
     var listStories = mutableListOf<Int>()
     var mProgressDialog: KProgressHUD? = null
 
@@ -476,9 +475,6 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
 
         mAuth = FirebaseAuth.getInstance()
         _binding?.listener = this
-
-        //  view.findViewById<View>(R.id.picture).setOnClickListener(this)
-        //   view.findViewById<View>(R.id.pictureback).setOnClickListener(this)
         val linearTimerView: LinearTimerView = view.findViewById(R.id.linearTimer)
         val linearTimerViewback: LinearTimerView = view.findViewById(R.id.linearTimerback)
         blockView = view.findViewById(R.id.blockView)
@@ -497,8 +493,6 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
         picture?.setOnTouchListener(recordTouchListener)
         pictureBack?.setOnLongClickListener(recordHoldListenerback)
         pictureBack?.setOnTouchListener(recordTouchListenerback)
-        // camera_flash=(ImageView)view.findViewById(R.id.camera_flash);
-        // camera_flash=(ImageView)view.findViewById(R.id.camera_flash);
         mTextureView = view.findViewById<View>(R.id.texture) as AutoFitTextureView
 
         addressResultReceiver = LocationAddressResultReceiver(Handler())
@@ -538,7 +532,6 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
             startActivity(i)
         })
 
-
         imgGroup?.setOnClickListener(View.OnClickListener {
             val i = Intent(activity, GroupActivity::class.java)
             startActivity(i)
@@ -561,6 +554,8 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
 
         _binding?.swipeRefresh?.setOnRefreshListener {
             if (requireActivity().isNetworkActiveWithMessage()) {
+                if (_binding?.swipeRefresh?.isRefreshing == true)
+                    _binding?.swipeRefresh?.isRefreshing = false
                 val currentUser = mAuth?.currentUser
                 val jsonObject = JSONObject()
                 try {
@@ -568,7 +563,8 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
                 } catch (e: JSONException) {
                     e.printStackTrace()
                 }
-                mAdapter?.clearList()
+                listStories.clear()
+                hashmapStories.clear()
                 mViewModel.stories(jsonObject)
             } else _binding?.swipeRefresh?.isRefreshing = false
         }
@@ -577,7 +573,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
         val display = wm.defaultDisplay
         val metrics = DisplayMetrics()
         display.getMetrics(metrics)
-        val lp = blockView?.getLayoutParams() as ConstraintLayout.LayoutParams
+        val lp = blockView?.layoutParams as ConstraintLayout.LayoutParams
         lp.width = display.width
         lp.height = display.height - display.width * 16 / 9
         blockView?.requestLayout()
@@ -590,7 +586,6 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
         } catch (e: JSONException) {
             e.printStackTrace()
         }
-        mAdapter?.clearList()
         mViewModel.stories(jsonObject)
     }
 
@@ -615,7 +610,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
     }
 
     private fun apiObservers() {
-        mViewModel.storyList?.observe(requireActivity(), androidx.lifecycle.Observer {
+        mViewModel.storyList?.observe(requireActivity(), androidx.lifecycle.Observer { it ->
             when (it.status) {
                 Status.LOADING -> {
                     mViewModel.loader.postValue(true)
@@ -634,11 +629,11 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
                 }
                 Status.SUCCESS -> {
                     mViewModel.loader.postValue(false)
-                    _binding?.swipeRefresh?.isRefreshing = false
                     it.data?.apply {
                         it.data?.videos?.let { p ->
+                            if (stories.size > 0) stories.clear()
                             stories?.addAll(it.data.videos)
-                            if (stories != null && stories?.isNotEmpty()) {
+                            if (stories.isNotEmpty()) {
                                 //  mAdapter?.updateList(stories)
                                 stories.forEach {
                                     var listOfData: ArrayList<StoryModel> = ArrayList()
@@ -647,13 +642,18 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
                                         hashmapStories[it.user_id] = listOfData
                                         listStories.add(it.user_id)
                                     } else {
-                                        listOfData = (hashmapStories[it.user_id] as ArrayList<StoryModel>?)!!
+                                        listOfData =
+                                            (hashmapStories[it.user_id] as ArrayList<StoryModel>?)!!
                                         listOfData.add(it)
+                                        listOfData.reverse()
                                         hashmapStories[it.user_id] = listOfData
+                                        Log.e("HashSize", hashmapStories[it.user_id].toString())
                                     }
                                 }
-                              //  mAdapter?.clearList()
-                                mAdapter?.setDataList(listStories.toMutableList(),hashmapStories)
+                                _binding?.swipeRefresh?.isRefreshing = false
+                                Log.e("HashSizeSend", hashmapStories.toString())
+                                //  hashmapStories.values.reversed()
+                                mAdapter?.setDataList(listStories.toMutableList(), hashmapStories)
                                 mAdapter?.notifyDataSetChanged()
                                 emptyChatTv!!.visibility = View.GONE
                             } else {
@@ -668,8 +668,6 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
                 }
             }
         })
-
-
     }
 
     private val recordHoldListener =
@@ -678,6 +676,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
             if (!startRecordingcalled) {
                 startRecordingVideo()
                 linearTimer!!.startTimer()
+                _binding?.strokeView?.visibility=View.VISIBLE
             }
             isSpeakButtonLongPressed = true
             true
@@ -694,6 +693,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
                 stopRecordingVideo()
                 linearTimer!!.pauseTimer()
                 linearTimer!!.resetTimer()
+                _binding?.strokeView?.visibility=View.GONE
                 startRecordingcalled = false
                 // Do something when the button is released.
                 isSpeakButtonLongPressed = false
@@ -708,6 +708,8 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
             if (!startRecordingcalled) {
                 startRecordingVideo()
                 linearTimerback!!.startTimer()
+                _binding?.strokeView?.visibility=View.VISIBLE
+
             }
             isSpeakButtonLongPressed = true
             true
@@ -725,6 +727,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
                     isSpeakButtonLongPressed = false
                     linearTimerback!!.pauseTimer()
                     linearTimerback!!.resetTimer()
+                    _binding?.strokeView?.visibility=View.GONE
                     stopRecordingVideo()
                 }
             }
@@ -1452,7 +1455,9 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
             isSpeakButtonLongPressed = false
             linearTimer!!.resetTimer()
             linearTimerback!!.resetTimer()
+            _binding?.strokeView?.visibility=View.GONE
             stopRecordingVideo()
+
         } catch (e: Exception) {
             e.printStackTrace()
             stopRecordingVideo()
@@ -1473,9 +1478,10 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
 
     override fun onTimerReset() {
         time!!.text = ""
+
     }
 
-    override fun onMediaThumbnailClick(position: Int) {
+    override fun onMediaThumbnailClick(position: Int, storyModel: StoryModel?) {
         if (currentLoc == null) {
             Toast.makeText(
                 context,
@@ -1484,11 +1490,15 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
             ).show()
         } else {
             val i = Intent(activity, StoryVideoActivity::class.java)
-            i.putExtra("currentLocation", stories[position].location)
-            //  i.putExtra("currentLocation", stories[position].location)
+            i.putExtra("id", storyModel?.id)
+            i.putExtra("userId", storyModel?.user_id)
+            i.putExtra("currentLocation", currentLoc)
             startActivity(i)
         }
+
+
     }
+
 
     override fun onMentionedUserClick(username: String) {
         TODO("Not yet implemented")
@@ -1501,6 +1511,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
             } else _binding?.emptyChatTv?.makeGone()
         }
     }
+
 
     /**
      * Saves a JPEG [Image] into the specified [File].
@@ -1539,9 +1550,6 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
             }
         }
     }
-
-    //for video
-
 
     //for video
     /**
@@ -1814,26 +1822,6 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
         }
     }
 
-
-    private fun showProgress() {
-        if (mProgressDialog == null) {
-            mProgressDialog = KProgressHUD.create(activity)
-                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                .setLabel("Please wait...")
-                .setCancellable(false)
-                .setAnimationSpeed(3)
-                .setDimAmount(0.5f)
-                .show()
-        } else mProgressDialog!!.show()
-    }
-
-    private fun hideProgress() {
-        if (mProgressDialog != null && mProgressDialog!!.isShowing) {
-            mProgressDialog!!.dismiss()
-        }
-    }
-
-
     /**
      * Compares two `Size`s based on their areas.
      */
@@ -1947,9 +1935,6 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
                 Log.d("Address", "Location null retrying")
                 getAddress()
             }
-            /*if (resultCode == 1) {
-                Toast.makeText(getActivity(), "Address not found, ", Toast.LENGTH_SHORT).show();
-            }*/
             val currentAdd = resultData.getString("address_result")
             currentAdd?.let { showResults(it) }
         }
@@ -1961,9 +1946,8 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
     }
 
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-     //   mAdapter?.filter?.filter(s.toString())
+        //   mAdapter?.filter?.filter(s.toString())
     }
-
 
 }
 

@@ -642,8 +642,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
                                         hashmapStories[it.user_id] = listOfData
                                         listStories.add(it.user_id)
                                     } else {
-                                        listOfData =
-                                            (hashmapStories[it.user_id] as ArrayList<StoryModel>?)!!
+                                        listOfData = (hashmapStories[it.user_id] as ArrayList<StoryModel>?)!!
                                         listOfData.add(it)
                                         listOfData.reverse()
                                         hashmapStories[it.user_id] = listOfData
@@ -1946,7 +1945,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
     }
 
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-        //   mAdapter?.filter?.filter(s.toString())
+           mAdapter?.filter?.filter(s.toString())
     }
 
 }

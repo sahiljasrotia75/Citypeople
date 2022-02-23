@@ -16,6 +16,7 @@ import java.util.*
 
 class FriendAdapter(var listener: FriendItemListener) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
+
      private var nList= mutableListOf<User>()
     private var mList = mutableListOf<User>()
 
@@ -80,7 +81,6 @@ class FriendAdapter(var listener: FriendItemListener) :
         override fun performFiltering(constraint: CharSequence?): FilterResults {
              val filteredList: MutableList<User> = ArrayList()
             if (constraint == null || constraint.isEmpty()) {
-
                   filteredList.addAll(nList)
                    listener.onEmptySearch(filteredList.isEmpty())
             } else {

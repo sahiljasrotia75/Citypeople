@@ -11,17 +11,18 @@ import com.citypeople.project.R
 import com.citypeople.project.databinding.UserPostMediaItemLayoutBinding
 import com.citypeople.project.models.signin.StoryModel
 import com.citypeople.project.show
+import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class UserPostMediaAdapter(
     var listener: ProfileMediaItemListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
-//    private var nList= mutableListOf<StoryModel>()
-//    private var mList = mutableListOf<StoryModel>()
 
     private var toMutableList: MutableList<Int> = ArrayList()
     private var mhashmapStories: HashMap<Int, MutableList<StoryModel>> = HashMap()
+    private var nhashmapStories: HashMap<Int, MutableList<StoryModel>> = HashMap()
+
 
     fun clearList() {
         this.toMutableList.clear()
@@ -40,7 +41,7 @@ class UserPostMediaAdapter(
     ) {
         this.toMutableList = toMutableList
         this.mhashmapStories = hashmapStories
-        //this.nhashmapStories = hashmapStories
+        this.nhashmapStories.putAll(hashmapStories)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -75,22 +76,23 @@ class UserPostMediaAdapter(
 
     override fun getItemCount(): Int = toMutableList.size
 
-    /*  private val filter: Filter = object : Filter() {
+      private val filter: Filter = object : Filter() {
           @Override
           override fun performFiltering(constraint: CharSequence?): FilterResults {
-              var filteredList:  HashMap<Int, MutableList<StoryModel>> = HashMap()
+              var filteredList: HashMap<Int, MutableList<StoryModel>> = HashMap()
               if (constraint == null || constraint.isEmpty()) {
-
-                  filteredList = nhashmapStories
+                  filteredList.putAll(nhashmapStories)
                   listener.onEmptySearch(filteredList.isEmpty())
               } else {
-
                   val filterPattern =
                       constraint.toString().toLowerCase(Locale.ROOT).trim { it <= ' ' }
-                  for (item in nList) {
-                      when {
-                          item.name.toLowerCase(Locale.ROOT).contains(filterPattern) -> {
-                              filteredList.add(item)
+
+                  for ((key, value) in nhashmapStories) {
+                      for (item in value) {
+                          when {
+                              item.name.toLowerCase(Locale.ROOT).contains(filterPattern) -> {
+                                  filteredList.put(key,value)
+                              }
                           }
                       }
                       listener.onEmptySearch(filteredList.isEmpty())
@@ -104,11 +106,11 @@ class UserPostMediaAdapter(
           @Suppress("UNCHECKED_CAST")
           @Override
           override fun publishResults(constraint: CharSequence?, results: FilterResults) {
-              mList.clear()
-              mList.addAll(results.values as MutableList<StoryModel>)
+              mhashmapStories.clear()
+              mhashmapStories.putAll(results.values as HashMap<Int, MutableList<StoryModel>>)
               notifyDataSetChanged()
           }
-      }*/
+      }
 
     override fun getItemId(position: Int): Long {
         return super.getItemId(position)

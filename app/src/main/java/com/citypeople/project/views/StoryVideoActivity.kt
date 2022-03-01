@@ -42,10 +42,8 @@ import com.citypeople.project.adapters.utils.OnSwipeTouchListener
 import com.citypeople.project.adapters.utils.PlayerViewAdapter
 import com.citypeople.project.adapters.utils.RecyclerViewScrollListener
 import com.citypeople.project.cameranew.AutoFitTextureView
-import com.citypeople.project.cameranew.Camera2BasicFragment
 import com.citypeople.project.databinding.FragmentVideoNewBinding
 import com.citypeople.project.findFirstVisibleItemPosition
-import com.citypeople.project.models.signin.MediaObject
 import com.citypeople.project.models.signin.StoryModel
 import com.citypeople.project.retrofit.Status
 import com.citypeople.project.viewmodel.StoryViewModel
@@ -113,7 +111,6 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
         get() = layoutManager.findLastVisibleItemPosition()
     private var recyclerView: RecyclerView? = null
     private var mAdapter: StoryRecyclerAdapter? = null
-    private val modelList: ArrayList<MediaObject> = ArrayList<MediaObject>()
     var myLocation: String? = ""
     private var currentUserId: Int? = 0
     private var currentId: Int? = 0

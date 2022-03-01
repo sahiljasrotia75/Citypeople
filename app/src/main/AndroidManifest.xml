@@ -52,9 +52,7 @@
         <activity
             android:name=".views.GroupActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".CameraPreview"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".SplashActivity"
             android:exported="true">
@@ -65,9 +63,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".camera_preview.CameraPreview" android:exported="true">
 
-        </activity>
 
 
         <service

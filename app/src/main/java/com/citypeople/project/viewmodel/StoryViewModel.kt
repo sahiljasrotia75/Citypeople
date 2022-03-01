@@ -1,14 +1,11 @@
 package com.citypeople.project.viewmodel
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.citypeople.project.models.signin.FriendResponse
-import com.citypeople.project.models.signin.MediaObject
 import com.citypeople.project.models.signin.StoryDataResponse
 import com.citypeople.project.repo.AuthRepo
-import com.citypeople.project.repo.MediaRepo
 import com.citypeople.project.retrofit.ErrorResponse
 import com.citypeople.project.retrofit.Resources
 import com.citypeople.project.utilities.common.BaseViewModel
@@ -58,10 +55,7 @@ import java.io.File
         }
     }
 
-    private val mediaData: MutableLiveData<MutableList<MediaObject>> = MediaRepo().getMediaData()
-    fun getMedia(): MutableLiveData<MutableList<MediaObject>>{
-        return mediaData
-    }
+
 
 
 

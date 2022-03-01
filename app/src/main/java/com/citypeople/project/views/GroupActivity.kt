@@ -15,7 +15,6 @@ import android.media.ImageReader
 import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
@@ -46,13 +45,11 @@ import com.citypeople.project.adapters.FriendAdapter
 import com.citypeople.project.adapters.GroupListAdapter
 import com.citypeople.project.R
 import com.citypeople.project.cameranew.AutoFitTextureView
-import com.citypeople.project.cameranew.Camera2BasicFragment
 import com.citypeople.project.makeGone
 import com.citypeople.project.makeVisible
 import com.citypeople.project.models.signin.User
 import com.citypeople.project.retrofit.Status
 import com.citypeople.project.utilities.common.BaseViewModel
-import com.citypeople.project.viewmodel.FriendViewModel
 import com.citypeople.project.viewmodel.GroupViewModel
 import com.google.firebase.auth.FirebaseAuth
 import io.github.krtkush.lineartimer.LinearTimer

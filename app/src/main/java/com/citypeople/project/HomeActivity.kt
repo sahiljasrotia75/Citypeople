@@ -1,22 +1,10 @@
 package com.citypeople.project
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context
-import android.graphics.PixelFormat
-import android.os.Build
 import android.os.Bundle
 import android.view.*
-import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.citypeople.project.cameranew.Camera2BasicFragment
 import com.google.firebase.auth.FirebaseAuth
-import androidx.core.view.WindowInsetsControllerCompat
 import com.citypeople.project.cameranew.Camera2BasicFragmentKt
-import com.citypeople.project.views.CustomViewGroup
 
 
 class HomeActivity : AppCompatActivity() {

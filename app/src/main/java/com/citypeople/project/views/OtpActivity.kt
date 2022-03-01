@@ -11,7 +11,6 @@ import androidx.lifecycle.Observer
 import com.citypeople.project.BaseActivity
 import com.citypeople.project.HomeActivity
 import com.citypeople.project.R
-import com.citypeople.project.camera_preview.CameraPreview
 import com.citypeople.project.databinding.ActivityOtpBinding
 import com.citypeople.project.retrofit.Status
 import com.citypeople.project.utilities.common.BaseViewModel

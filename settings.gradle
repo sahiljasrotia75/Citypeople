@@ -8,5 +8,5 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "MyProject"
-include ':app', ':otpview',':ffmpegVideoOperation',':photoview'
+include ':app', ':otpview',':ffmpegVideoOperation'
 

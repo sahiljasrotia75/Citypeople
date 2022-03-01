@@ -30,7 +30,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -40,11 +39,9 @@ import com.citypeople.project.*
 import com.citypeople.project.adapters.GroupListAdapter
 import com.citypeople.project.adapters.VideoSendAdapter
 import com.citypeople.project.cameranew.AutoFitTextureView
-import com.citypeople.project.cameranew.Camera2BasicFragment
 import com.citypeople.project.databinding.ActivityVideoSendBinding
 import com.citypeople.project.models.signin.User
 import com.citypeople.project.retrofit.Status
-import com.citypeople.project.utilities.ImagePickerUtils
 import com.citypeople.project.utilities.common.BaseViewModel
 import com.citypeople.project.viewmodel.VideoSendViewModel
 import com.google.android.flexbox.AlignItems
@@ -64,7 +61,6 @@ import java.util.*
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
-import kotlin.math.abs
 
 
 class VideoSendActivity : BaseActivity(), VideoSendListener,

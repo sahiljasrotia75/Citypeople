@@ -29,7 +29,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -38,9 +37,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.citypeople.project.BaseActivity
 import com.citypeople.project.adapters.FriendAdapter
 import com.citypeople.project.R
-import com.citypeople.project.adapters.utils.PlayerViewAdapter
 import com.citypeople.project.cameranew.AutoFitTextureView
-import com.citypeople.project.cameranew.Camera2BasicFragment
 import com.citypeople.project.databinding.ActivityFriendBinding
 import com.citypeople.project.makeGone
 import com.citypeople.project.makeVisible

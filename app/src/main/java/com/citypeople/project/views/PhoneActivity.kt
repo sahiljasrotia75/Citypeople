@@ -12,7 +12,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.citypeople.project.HomeActivity
 import com.citypeople.project.R
-import com.citypeople.project.camera_preview.CameraPreview
 import com.citypeople.project.databinding.ActivityPhoneBinding
 import com.citypeople.project.viewmodel.PhoneViewModel
 import com.google.firebase.FirebaseException

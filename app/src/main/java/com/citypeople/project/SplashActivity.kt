@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
-import com.citypeople.project.camera_preview.CameraPreview
 import com.citypeople.project.views.UserNameActivity
 import com.google.firebase.auth.FirebaseAuth
 

@@ -114,7 +114,6 @@
                     app:OtpItemCount="6"
                     app:OtpItemSpacing="@dimen/_12sdp"
                     app:OtpLineColor="@color/mid_grey"
-
                     app:OtpViewType="line"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

@@ -4,7 +4,11 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
+import android.app.PendingIntent
 import android.content.ContentResolver
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.*
@@ -19,6 +23,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.provider.ContactsContract.*
+import android.telephony.SmsManager
 import android.util.Log
 import android.util.Range
 import android.util.Size
@@ -35,8 +40,8 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.citypeople.project.BaseActivity
-import com.citypeople.project.adapters.FriendAdapter
 import com.citypeople.project.R
+import com.citypeople.project.adapters.FriendAdapter
 import com.citypeople.project.cameranew.AutoFitTextureView
 import com.citypeople.project.databinding.ActivityFriendBinding
 import com.citypeople.project.makeGone
@@ -47,13 +52,12 @@ import com.citypeople.project.utilities.common.BaseViewModel
 import com.citypeople.project.viewmodel.FriendViewModel
 import com.google.firebase.auth.FirebaseAuth
 import io.github.krtkush.lineartimer.LinearTimer
+import org.json.JSONArray
 import org.json.JSONObject
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.lang.NullPointerException
-import java.lang.RuntimeException
 import java.util.*
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
@@ -74,11 +78,12 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
     private var previewHolder: SurfaceHolder? = null
     lateinit var bindingObj: ActivityFriendBinding
     private var inPreview = false
-    var contacts= hashMapOf<String,String>()
+    var contacts = hashMapOf<String, String>()
+    var contactsName = hashMapOf<String, String>()
     val mViewModel by viewModel<FriendViewModel>()
     lateinit var mFriendAdapter: FriendAdapter
     lateinit var mAuth: FirebaseAuth
-    var aa = ArrayList<FriendModel>()
+    var aa = ArrayList<User>()
     var phone = ArrayList<FriendModel>()
 
 
@@ -505,11 +510,6 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
     }
 
     private fun initilization() {
-    //    preview = findViewById<View>(R.id.front_cam) as SurfaceView
-   //     previewHolder = preview?.holder
-   //     preview!!.visibility = View.VISIBLE
-    //    previewHolder?.addCallback(surfaceCallback)
-  //      previewHolder?.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS)
         mTextureView = findViewById<View>(R.id.texture) as AutoFitTextureView?
     }
 
@@ -1245,20 +1245,19 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
     }
 
 
-
-        private fun setAdapter() {
-            bindingObj.rvContactList.layoutManager = LinearLayoutManager(this)
-            mFriendAdapter = FriendAdapter(this)
-            bindingObj.rvContactList.adapter = mFriendAdapter
-            mFriendAdapter.clearList()
-           // mFriendAdapter.setDataList(aa.toMutableList())
-            bindingObj.rvContactList.addItemDecoration(
-                DividerItemDecoration(
-                    this,
-                    DividerItemDecoration.VERTICAL
-                )
+    private fun setAdapter() {
+        bindingObj.rvContactList.layoutManager = LinearLayoutManager(this)
+        mFriendAdapter = FriendAdapter(this)
+        bindingObj.rvContactList.adapter = mFriendAdapter
+        mFriendAdapter.clearList()
+        // mFriendAdapter.setDataList(aa.toMutableList())
+        bindingObj.rvContactList.addItemDecoration(
+            DividerItemDecoration(
+                this,
+                DividerItemDecoration.VERTICAL
             )
-        }
+        )
+    }
 
     /**
      * Saves a JPEG [Image] into the specified [File].
@@ -1304,54 +1303,89 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
         val phones = cr.query(CommonDataKinds.Phone.CONTENT_URI, null, null, null, null)
         // use the cursor to access the contacts
 
+        val sharedPreferences: SharedPreferences = this.getSharedPreferences("Citypeople",
+            Context.MODE_PRIVATE)
+        val countryCode = sharedPreferences.getString("country_code","")
+
         while (phones!!.moveToNext()) {
-           // val arrayNumber = FriendModel()
+            // val arrayNumber = FriendModel()
             val name = phones.getString(phones.getColumnIndex(CommonDataKinds.Phone.DISPLAY_NAME))
             // get display name
             var phone = phones.getString(phones.getColumnIndex(CommonDataKinds.Phone.NUMBER))
-            phone = phone.replace("(","").replace(")","").replace("-","").replace(" ","")
+            phone = phone.replace("(", "").replace(")", "").replace("-", "").replace(" ", "")
             // get phone number
-           contacts[phone]=name
+            if (!phone.contains("+")){
+                phone = countryCode+phone
+            }
+            if (contacts.containsKey(phone)){
+                continue
+            }
+            contacts[phone] = name
+            // contactsName[name] = phone
+
+            val arrayNumber = User(name = name, phone = phone)
+            aa.add(arrayNumber)
+
+            Log.d("name>>", name + "  " + phone)
 
         }
+
+
+
         getListOfUsers()
     }
 
-    private fun getListOfUsers(){
+    private fun getListOfUsers() {
         val currentUser = mAuth.currentUser
         val jsonObject = JSONObject()
         val list = ArrayList<String>(contacts.keys)
+
         jsonObject.put("contacts", list);
         jsonObject.put("phone", currentUser?.phoneNumber);
         mViewModel.contacts(jsonObject)
     }
 
-    fun apiObserver(){
+    fun apiObserver() {
         mViewModel.contactsList?.observe(this, Observer {
-            when(it.status){
+            when (it.status) {
                 Status.LOADING -> mViewModel.loader.postValue(true)
                 Status.ERROR -> {
                     mViewModel.loader.postValue(false)
-                    it.message?.let {msg->
-                        Toast.makeText(this,msg.message,Toast.LENGTH_SHORT).show()
-                    }?:Toast.makeText(this,"Something went wrong",Toast.LENGTH_SHORT).show()
+                    it.message?.let { msg ->
+                        Toast.makeText(this, msg.message, Toast.LENGTH_SHORT).show()
+                    } ?: Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
                 }
-                Status.SUCCESS->{
+                Status.SUCCESS -> {
                     mViewModel.loader.postValue(false)
                     it.data?.apply {
-                        it.data.users.map {
-                            T ->
-                            T.name = contacts[T.phone].toString()
+
+                        var list = hashMapOf<String, Boolean>()
+
+                        it.data.users.map { T ->
+                            list[T.phone] = true
                         }
-                        if(it.data.users.isNullOrEmpty()){
+
+                        aa.map { T ->
+                            if (list[T.phone]!=null)
+                            T.is_registered=true
+                        }
+
+                        aa.sortByDescending { it.is_registered }
+
+
+                        if (aa.isNullOrEmpty()) {
                             bindingObj.emptyChatTv.makeVisible()
-                        }else{
+                        } else {
                             bindingObj.emptyChatTv.makeGone()
-                            mFriendAdapter.setDataList(it.data.users.toMutableList())
+                            mFriendAdapter.setDataList(aa.toMutableList())
                             mFriendAdapter.notifyDataSetChanged()
-                            Log.e("ContactList",it.data.toString())
+                            Log.e("ContactList", it.data.toString())
                         }
-                        Toast.makeText(applicationContext,"Friend list fetched",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            applicationContext,
+                            "Friend list fetched",
+                            Toast.LENGTH_SHORT
+                        ).show()
 //                        val i = Intent(applicationContext, HomeActivity::class.java)
 //                        startActivity(i)
 //                        finish()
@@ -1361,21 +1395,22 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
         })
 
         mViewModel.addFriend?.observe(this, Observer {
-            when(it.status){
+            when (it.status) {
                 Status.LOADING -> mViewModel.loader.postValue(true)
                 Status.ERROR -> {
                     mViewModel.loader.postValue(false)
-                    it.message?.let {msg->
-                        Toast.makeText(this,msg.message,Toast.LENGTH_SHORT).show()
-                    }?:Toast.makeText(this,"Something went wrong",Toast.LENGTH_SHORT).show()
+                    it.message?.let { msg ->
+                        Toast.makeText(this, msg.message, Toast.LENGTH_SHORT).show()
+                    } ?: Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
                 }
-                Status.SUCCESS->{
+                Status.SUCCESS -> {
                     mViewModel.loader.postValue(false)
-                    if (it.data?.status == true){
-                        Toast.makeText(applicationContext,"Friends updated",Toast.LENGTH_SHORT).show()
+                    if (it.data?.status == true) {
+                        Toast.makeText(applicationContext, "Friends updated", Toast.LENGTH_SHORT)
+                            .show()
                         finish()
-                    }else{
-                        Toast.makeText(this,"Something went wrong",Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -1388,12 +1423,12 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
     }
 
     override fun addFriend() {
-     val friendList = mFriendAdapter?.getCurrentItems()?.filter { it.isSelected}?.map {
-           it.id
-       }
-        if (friendList.isNullOrEmpty()){
+        val friendList = mFriendAdapter?.getCurrentItems()?.filter { it.isSelected }?.map {
+            it.id
+        }
+        if (friendList.isNullOrEmpty()) {
             Toast.makeText(this, "Your friend List is Empty", Toast.LENGTH_SHORT).show();
-        }else{
+        } else {
             val currentUser = mAuth.currentUser
             val jsonObject = JSONObject()
             val list = ArrayList<Int>(friendList.toMutableList())
@@ -1401,7 +1436,7 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
             jsonObject.put("phone", currentUser?.phoneNumber);
             mViewModel.addFriend(jsonObject)
         }
-        Log.e("mySeletedList",friendList.toString())
+        Log.e("mySeletedList", friendList.toString())
     }
 
     override fun onBack() {
@@ -1414,9 +1449,9 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
 
     override fun onEmptySearch(boolean: Boolean) {
         runOnUiThread {
-            if (boolean){
+            if (boolean) {
                 bindingObj.emptyChatTv.makeVisible()
-            }else  bindingObj.emptyChatTv.makeGone()
+            } else bindingObj.emptyChatTv.makeGone()
         }
     }
 
@@ -1425,8 +1460,37 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
     }
 
     override fun onSelection(item: User, position: Int) {
-        item.isSelected=!item.isSelected
+        item.isSelected = !item.isSelected
         mFriendAdapter?.notifyItemChanged(position)
+    }
+
+    override fun invite(item: User, position: Int) {
+        /*Create an ACTION_SEND Intent*/
+        val intent = Intent(Intent.ACTION_SEND)
+        /*This will be the actual content you wish you share.*/
+        val shareBody =
+            "Your friend " + item.name + " has sent you a friend request. You can start a video message by accepting the request by going to friend list section."
+        /*The type of the content is text, obviously.*/
+        intent.type = "text/plain"
+        /*Applying information Subject and Body.*/
+        intent.putExtra(
+            Intent.EXTRA_SUBJECT,
+            "Subject Here"
+        )
+        intent.putExtra(Intent.EXTRA_TEXT, shareBody)
+        /*Fire!*/
+        startActivity(
+            Intent.createChooser(
+                intent,
+                "Share Via"
+            )
+        )
+        //  sendSMS(item.phone, "Your friend "+ item.name +" has sent you a friend request. You can start a video message by accepting the request by going to friend list section")
+    }
+
+    private fun sendSMS(phoneNumber: String, message: String) {
+        val sentPI: PendingIntent = PendingIntent.getBroadcast(this, 0, Intent("SMS_SENT"), 0)
+        SmsManager.getDefault().sendTextMessage(phoneNumber, null, message, sentPI, null)
     }
 
     /**
@@ -1450,8 +1514,6 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
 }
 
 
-
-
 interface FriendListener {
     fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int)
     fun addFriend()
@@ -1461,5 +1523,5 @@ interface FriendListener {
 class FriendModel() {
     var name: String = ""
     var isSelected = false
-    var phone :String=""
+    var phone: String = ""
 }

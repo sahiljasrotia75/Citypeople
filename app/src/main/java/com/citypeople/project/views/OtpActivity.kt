@@ -1,7 +1,9 @@
 package com.citypeople.project.views
 
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
@@ -31,6 +33,7 @@ class OtpActivity : BaseActivity(), OtpListeners {
     private var verificationId: String? = null
     private var firstName: String? = ""
     private var lastName: String? = ""
+    private var countryCode: String? = ""
     var flag: Boolean = false
     var cTimer: CountDownTimer? = null
     private var myPhoneNumber: String? = ""
@@ -50,7 +53,7 @@ class OtpActivity : BaseActivity(), OtpListeners {
         mAuth = FirebaseAuth.getInstance();
         val ii = intent
         val phone = ii.getStringExtra("phoneNumber")
-        val countryCode = ii.getStringExtra("countryCode")
+         countryCode = ii.getStringExtra("countryCode")
         verificationId = ii.getStringExtra("verificationId")
         firstName = ii.getStringExtra("firstName")
         lastName = ii.getStringExtra("lastName")
@@ -202,6 +205,13 @@ class OtpActivity : BaseActivity(), OtpListeners {
                 Status.SUCCESS -> {
                     mViewModel.loader.postValue(false)
                     it.data?.apply {
+                        val sharedPreferences: SharedPreferences = this@OtpActivity.getSharedPreferences("Citypeople",
+                            Context.MODE_PRIVATE)
+                        val editor: SharedPreferences.Editor =  sharedPreferences.edit()
+                        editor.putString("country_code",countryCode)
+                        editor.apply()
+                        editor.commit()
+
                         val i = Intent(applicationContext, HomeActivity::class.java)
                         startActivity(i)
                         finish()
@@ -209,6 +219,8 @@ class OtpActivity : BaseActivity(), OtpListeners {
                 }
             }
         })
+
+
 
     }
 

@@ -2,6 +2,7 @@ package com.citypeople.project
 
 import android.app.Application
 import android.content.Context
+import androidx.lifecycle.MutableLiveData
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 
 import org.koin.android.ext.koin.androidContext
@@ -14,6 +15,10 @@ class MyApplication : Application() {
         fun getInstance() : MyApplication?{
             return mInstance
         }
+        var notificationArrived = MutableLiveData<Boolean>()
+        var mSessionNotification = MutableLiveData<Int?>()
+        var isAppBackground = false
+
     }
 
     override fun onCreate() {

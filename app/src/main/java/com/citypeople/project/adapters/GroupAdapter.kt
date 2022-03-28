@@ -13,13 +13,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.citypeople.project.R
 import com.citypeople.project.databinding.FriendItemLayoutBinding
+import com.citypeople.project.databinding.GroupsItemLayoutBinding
 import com.citypeople.project.models.signin.User
 import com.citypeople.project.views.FriendListener
 import com.citypeople.project.views.FriendModel
 import kotlinx.android.synthetic.main.friend_item_layout.view.*
 import java.util.*
 
-class FriendAdapter(var listener: FriendItemListener) :
+class GroupAdapter(var listener: FriendItemListener) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
     private var nList = mutableListOf<User>()
@@ -40,9 +41,9 @@ class FriendAdapter(var listener: FriendItemListener) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val binderObject = DataBindingUtil.inflate<FriendItemLayoutBinding>(
+        val binderObject = DataBindingUtil.inflate<GroupsItemLayoutBinding>(
             LayoutInflater.from(parent.context),
-            R.layout.friend_item_layout,
+            R.layout.groups_item_layout,
             parent,
             false
         )
@@ -63,21 +64,9 @@ class FriendAdapter(var listener: FriendItemListener) :
             //    viewHolder.bindingObj.txtInvite.visibility = View.VISIBLE
                  viewHolder.bindingObj.checkBox.setBackgroundResource(R.drawable.unchecked)
 
-            viewHolder.itemView.checkBox.setOnClickListener {
+            viewHolder.itemView.setOnClickListener {
                 mList[i].isSelected = !mList[i].isSelected
                 notifyItemChanged(i)
-            }
-
-            if (mList[i].is_registered) {
-                viewHolder.bindingObj.txtInvite.visibility = View.GONE
-                viewHolder.bindingObj.checkBox.visibility = View.VISIBLE
-            } else {
-                viewHolder.bindingObj.txtInvite.visibility = View.VISIBLE
-                viewHolder.bindingObj.checkBox.visibility = View.GONE
-            }
-
-            viewHolder.itemView.txtInvite.setOnClickListener {
-                listener.invite(mList[i], position = i)
             }
 
         }
@@ -135,7 +124,7 @@ class FriendAdapter(var listener: FriendItemListener) :
         }
     }
 
-    inner class ViewHolder(var bindingObj: FriendItemLayoutBinding) :
+    inner class ViewHolder(var bindingObj: GroupsItemLayoutBinding) :
         androidx.recyclerview.widget.RecyclerView.ViewHolder(bindingObj.root)
 
     interface FriendItemListener : FriendListener {

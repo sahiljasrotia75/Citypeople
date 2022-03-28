@@ -57,24 +57,26 @@ class UserPostMediaAdapter(
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, pos: Int) {
         Log.d("position", pos.toString())
         if (viewHolder is ViewHolder) {
-            viewHolder.bindingObj.bindingObj = mhashmapStories[toMutableList[pos]]?.get(0)
-            viewHolder.bindingObj.executePendingBindings()
-            viewHolder.itemView.setOnClickListener { listener.onMediaThumbnailClick(position = pos,mhashmapStories[toMutableList[pos]]?.get(0))}
-            val contentList = mhashmapStories[toMutableList[pos]]
-            val size = contentList?.size
-
-            if (size == 1){
-                viewHolder.bindingObj.mediaBtn.show()
-                viewHolder.bindingObj.mediaBtn.setImageResource(R.drawable.ic_videocamera_icon)
-            }else{
-                viewHolder.bindingObj.mediaBtn.show()
-                viewHolder.bindingObj.mediaBtn.setImageResource(R.drawable.ic_baseline_content_copy_24)
-            }
+                viewHolder.bindingObj.bindingObj = mhashmapStories[toMutableList[pos]]?.get(0)
+                viewHolder.bindingObj.executePendingBindings()
+                viewHolder.itemView.setOnClickListener { listener.onMediaThumbnailClick(position = pos,mhashmapStories[toMutableList[pos]]?.get(0))}
+                val contentList = mhashmapStories[toMutableList[pos]]
+                val size = contentList?.size
+                if (size == 1){
+                    viewHolder.bindingObj.mediaBtn.show()
+                    viewHolder.bindingObj.mediaBtn.setImageResource(R.drawable.ic_videocamera_icon)
+                }else{
+                    viewHolder.bindingObj.mediaBtn.show()
+                    viewHolder.bindingObj.mediaBtn.setImageResource(R.drawable.ic_baseline_content_copy_24)
+                }
         }
     }
 
 
-    override fun getItemCount(): Int = toMutableList.size
+    override fun getItemCount(): Int {
+        return toMutableList.size
+
+    }
 
       private val filter: Filter = object : Filter() {
           @Override

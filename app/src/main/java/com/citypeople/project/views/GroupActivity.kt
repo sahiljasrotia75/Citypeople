@@ -41,9 +41,9 @@ import com.google.android.flexbox.AlignItems
 import java.io.IOException
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.citypeople.project.BaseActivity
-import com.citypeople.project.adapters.FriendAdapter
 import com.citypeople.project.adapters.GroupListAdapter
 import com.citypeople.project.R
+import com.citypeople.project.adapters.GroupAdapter
 import com.citypeople.project.cameranew.AutoFitTextureView
 import com.citypeople.project.makeGone
 import com.citypeople.project.makeVisible
@@ -65,7 +65,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 
-class GroupActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemListener {
+class GroupActivity : BaseActivity(), FriendListener, GroupAdapter.FriendItemListener {
 
     private val ORIENTATIONS = SparseIntArray()
     private val REQUEST_CAMERA_PERMISSION = 1
@@ -74,7 +74,7 @@ class GroupActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemLi
 
 
     lateinit var bindingObj: ActivityGroupBinding
-    lateinit var mFriendAdapter: FriendAdapter
+    lateinit var mFriendAdapter: GroupAdapter
     lateinit var mGroupListAdapter: GroupListAdapter
     private var inPreview = false
     val mViewModel by viewModel<GroupViewModel>()
@@ -1268,7 +1268,7 @@ class GroupActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemLi
 
     private fun setAdapter() {
         bindingObj.rvContactList.layoutManager = LinearLayoutManager(this)
-        mFriendAdapter = FriendAdapter(this)
+        mFriendAdapter = GroupAdapter(this)
         bindingObj.rvContactList.adapter = mFriendAdapter
         mFriendAdapter.clearList()
        // mFriendAdapter.setDataList(aa.toMutableList())
@@ -1460,6 +1460,11 @@ class GroupActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemLi
     override fun onSelection(item: User, position: Int) {
 
     }
+
+    override fun invite(item: User, position: Int) {
+
+    }
+
     /**
      * Compares two `Size`s based on their areas.
      */

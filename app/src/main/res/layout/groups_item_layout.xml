@@ -13,7 +13,7 @@
 
         <variable
             name="listener"
-            type="com.citypeople.project.adapters.FriendAdapter.FriendItemListener" />
+            type="com.citypeople.project.adapters.GroupAdapter.FriendItemListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -54,35 +54,6 @@
             android:src="@drawable/unchecked"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
-
-
-        <TextView
-            android:id="@+id/txtInvite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_4sdp"
-            android:text="Invite"
-            android:textColor="@color/black_light"
-            android:textSize="@dimen/_10sdp"
-            android:visibility="gone"
-            android:fontFamily="@font/poppins_medium"
-            app:layout_constraintBottom_toBottomOf="@+id/phnText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/phnText" />
-
-        <TextView
-            android:id="@+id/txtAdd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_4sdp"
-            android:text="Add"
-            android:textColor="@color/black_light"
-            android:textSize="@dimen/_10sdp"
-            android:visibility="gone"
-            android:fontFamily="@font/poppins_medium"
-            app:layout_constraintBottom_toBottomOf="@+id/phnText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/phnText" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

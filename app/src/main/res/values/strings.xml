@@ -20,6 +20,7 @@
     <string name="groups">Groups</string>
     <string name="friends">Friends</string>
     <string name="no_address_found">No Address Found.</string>
+    <string name="default_notification_channel_id">CityPeople</string>
 
 
 </resources>

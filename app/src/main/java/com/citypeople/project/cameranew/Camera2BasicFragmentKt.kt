@@ -43,6 +43,8 @@ import com.citypeople.project.adapters.UserPostMediaAdapter
 import com.citypeople.project.adapters.UserPostMediaAdapter.ProfileMediaItemListener
 import com.citypeople.project.databinding.FragmentCameraBasicBinding
 import com.citypeople.project.models.signin.StoryModel
+import com.citypeople.project.models.signin.getDummyItem
+import com.citypeople.project.models.signin.getDummyUser
 import com.citypeople.project.retrofit.Status
 import com.citypeople.project.utilities.extensions.GridSpacingItemDecoration
 import com.citypeople.project.utilities.extensions.isNetworkActiveWithMessage
@@ -52,7 +54,9 @@ import com.citypeople.project.views.GroupActivity
 import com.citypeople.project.views.StoryVideoActivity
 import com.citypeople.project.views.VideoSendActivity
 import com.google.android.gms.location.*
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
 import com.kaopiz.kprogresshud.KProgressHUD
 import io.github.krtkush.lineartimer.LinearTimer
 import io.github.krtkush.lineartimer.LinearTimerView
@@ -373,6 +377,8 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
     private var mVideoPath: Uri? = null
     private var currentLoc: String? = null
     private var mAdapter: UserPostMediaAdapter? = null
+    private var an: MyDummyUserAdapter? = null
+
 
     private fun showToast(text: String) {
         val activity: Activity = requireActivity()
@@ -587,6 +593,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
             e.printStackTrace()
         }
         mViewModel.stories(jsonObject)
+        generateFCMToken()
     }
 
 
@@ -601,12 +608,48 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
         val spanCount = 3 //3 columns
         val spacing = 10//10 px
         val indulgeEdge = true
-
         rvUserList?.addItemDecoration(GridSpacingItemDecoration(spanCount, spacing, indulgeEdge))
         rvUserList!!.setHasFixedSize(true)
         // at last set adapter to recycler view.
         rvUserList?.layoutManager = layoutManager
         rvUserList?.adapter = mAdapter
+
+
+        val list = getDummyItem()
+        an = MyDummyUserAdapter(requireActivity(), list.toMutableList())
+        // setting grid layout manager to implement grid view.
+        // in this method '2' represents number of columns to be displayed in grid view.
+        val layoutManager1 = GridLayoutManager(
+            activity, 3
+        )
+        val spanCount1 = 3 //3 columns
+        val spacing1 = 10//10 px
+        val indulgeEdge1 = true
+        _binding?.rvDummyVideoList?.addItemDecoration(
+            GridSpacingItemDecoration(
+                spanCount1,
+                spacing1,
+                indulgeEdge1
+            )
+        )
+        _binding?.rvDummyVideoList?.setHasFixedSize(true)
+        // at last set adapter to recycler view.
+        _binding?.rvDummyVideoList?.layoutManager = layoutManager1
+        _binding?.rvDummyVideoList?.adapter = an
+
+    }
+
+    fun generateFCMToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+            // Get new FCM registration token
+            val token = task.result
+            //      sharedPref.setString(sharedPref.FCM_TOKEN, token)
+
+        })
     }
 
     private fun apiObservers() {
@@ -632,37 +675,46 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
                     it.data?.apply {
                         it.data?.videos?.let { p ->
                             if (stories.size > 0) stories.clear()
-                            stories?.addAll(it.data.videos)
-                            if (stories.isNotEmpty()) {
-                                //  mAdapter?.updateList(stories)
-                                stories.forEach {
-                                    var listOfData: ArrayList<StoryModel> = ArrayList()
-                                    if (!hashmapStories.contains(it.user_id)) {
-                                        listOfData.add(it)
-                                        hashmapStories[it.user_id] = listOfData
-                                        listStories.add(it.user_id)
-                                    } else {
-                                        listOfData = (hashmapStories[it.user_id] as ArrayList<StoryModel>?)!!
-                                        listOfData.add(it)
-                                        listOfData.reverse()
-                                        hashmapStories[it.user_id] = listOfData
-                                        Log.e("HashSize", hashmapStories[it.user_id].toString())
-                                    }
+                            val list = getDummyUser()
+                           // list.reversed()
+                            var videos = ArrayList<StoryModel>()
+                            if (it.data.videos.isNotEmpty()){
+                                videos.addAll(it.data.videos)
+                            }
+                            if (videos.size>0){
+                                stories.addAll(videos)
+                            }
+                            var users = ArrayList<Int>()
+                            stories.map { T ->
+                                if (!users.contains(T.user_id)){
+                                    users.add(T.user_id);
                                 }
-                                _binding?.swipeRefresh?.isRefreshing = false
-                                Log.e("HashSizeSend", hashmapStories.toString())
-                                //  hashmapStories.values.reversed()
-                                mAdapter?.setDataList(listStories.toMutableList(), hashmapStories)
-                                mAdapter?.notifyDataSetChanged()
-                                emptyChatTv!!.visibility = View.GONE
-                            } else {
-                                emptyChatTv!!.visibility = View.VISIBLE
-                                Toast.makeText(requireActivity(), "No Data", Toast.LENGTH_SHORT)
-                                    .show()
+                            }
+                            if (users.size < list.size){
+                                stories.addAll(list.subList(users.size,list.size-1))
                             }
 
+                            stories.forEach {
+                                var listOfData: ArrayList<StoryModel> = ArrayList()
+                                if (!hashmapStories.contains(it.user_id)) {
+                                    listOfData.add(it)
+                                    hashmapStories[it.user_id] = listOfData
+                                    listStories.add(it.user_id)
+                                } else {
+                                    listOfData =
+                                        (hashmapStories[it.user_id] as ArrayList<StoryModel>?)!!
+                                    listOfData.add(it)
+                                    listOfData.reverse()
+                                    hashmapStories[it.user_id] = listOfData
+                                    Log.e("HashSize", hashmapStories[it.user_id].toString())
+                                }
+                            }
+                            //  hashmapStories.values.reversed()
+                            mAdapter?.setDataList(listStories.toMutableList(), hashmapStories)
+                            mAdapter?.notifyDataSetChanged()
+                            emptyChatTv!!.visibility = View.GONE
+                            _binding?.rvDummyVideoList?.visibility = View.GONE
                         }
-
                     }
                 }
             }
@@ -675,7 +727,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
             if (!startRecordingcalled) {
                 startRecordingVideo()
                 linearTimer!!.startTimer()
-                _binding?.strokeView?.visibility=View.VISIBLE
+                _binding?.strokeView?.visibility = View.VISIBLE
             }
             isSpeakButtonLongPressed = true
             true
@@ -692,7 +744,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
                 stopRecordingVideo()
                 linearTimer!!.pauseTimer()
                 linearTimer!!.resetTimer()
-                _binding?.strokeView?.visibility=View.GONE
+                _binding?.strokeView?.visibility = View.GONE
                 startRecordingcalled = false
                 // Do something when the button is released.
                 isSpeakButtonLongPressed = false
@@ -707,7 +759,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
             if (!startRecordingcalled) {
                 startRecordingVideo()
                 linearTimerback!!.startTimer()
-                _binding?.strokeView?.visibility=View.VISIBLE
+                _binding?.strokeView?.visibility = View.VISIBLE
 
             }
             isSpeakButtonLongPressed = true
@@ -726,7 +778,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
                     isSpeakButtonLongPressed = false
                     linearTimerback!!.pauseTimer()
                     linearTimerback!!.resetTimer()
-                    _binding?.strokeView?.visibility=View.GONE
+                    _binding?.strokeView?.visibility = View.GONE
                     stopRecordingVideo()
                 }
             }
@@ -1454,7 +1506,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
             isSpeakButtonLongPressed = false
             linearTimer!!.resetTimer()
             linearTimerback!!.resetTimer()
-            _binding?.strokeView?.visibility=View.GONE
+            _binding?.strokeView?.visibility = View.GONE
             stopRecordingVideo()
 
         } catch (e: Exception) {
@@ -1481,20 +1533,25 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
     }
 
     override fun onMediaThumbnailClick(position: Int, storyModel: StoryModel?) {
-        if (currentLoc == null) {
-            Toast.makeText(
-                context,
-                "Please turn on your location",
-                Toast.LENGTH_SHORT
-            ).show()
-        } else {
-            val i = Intent(activity, StoryVideoActivity::class.java)
-            i.putExtra("id", storyModel?.id)
-            i.putExtra("userId", storyModel?.user_id)
-            i.putExtra("currentLocation", currentLoc)
-            startActivity(i)
-        }
 
+        if (storyModel?.location.isNullOrEmpty()) {
+            val i = Intent(activity, FriendActivity::class.java)
+            startActivity(i)
+        } else {
+            if (currentLoc == null) {
+                Toast.makeText(
+                    context,
+                    "Please turn on your location",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                val i = Intent(activity, StoryVideoActivity::class.java)
+                i.putExtra("id", storyModel?.id)
+                i.putExtra("userId", storyModel?.user_id)
+                i.putExtra("currentLocation", currentLoc)
+                startActivity(i)
+            }
+        }
 
     }
 
@@ -1550,7 +1607,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
         }
     }
 
-    //for video
+//for video
     /**
      * Start the camera preview.
      */
@@ -1642,11 +1699,11 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
         }
         mMediaRecorder!!.prepare()
     }
-    //    private String getVideoFilePath(Context context) {
-    //        final File dir = context.getExternalFilesDir(null);
-    //        return (dir == null ? "" : (dir.getAbsolutePath() + "/"))
-    //                + System.currentTimeMillis() + ".mp4";
-    //    }
+//    private String getVideoFilePath(Context context) {
+//        final File dir = context.getExternalFilesDir(null);
+//        return (dir == null ? "" : (dir.getAbsolutePath() + "/"))
+//                + System.currentTimeMillis() + ".mp4";
+//    }
     /**
      * Create a file Uri for saving an image or video
      */
@@ -1945,7 +2002,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
     }
 
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-           mAdapter?.filter?.filter(s.toString())
+        mAdapter?.filter?.filter(s.toString())
     }
 
 }

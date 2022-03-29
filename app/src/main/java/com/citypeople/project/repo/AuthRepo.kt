@@ -88,4 +88,14 @@ class AuthRepo(private val retrofitService :RetrofitService) {
         }
     }
 
+    suspend fun acceptFriend(jsonObject: JSONObject): Resources<FriendResponse> {
+        return safeApiCall {
+            retrofitService.acceptRejectData(
+                jsonObject["friend_id"] as Int,
+                jsonObject["phone"] as String,
+                jsonObject["accept"] as Int
+            )
+        }
+    }
+
 }

@@ -49,10 +49,11 @@ import com.citypeople.project.makeVisible
 import com.citypeople.project.models.signin.User
 import com.citypeople.project.retrofit.Status
 import com.citypeople.project.utilities.common.BaseViewModel
+import com.citypeople.project.utilities.extensions.isNetworkActiveWithMessage
 import com.citypeople.project.viewmodel.FriendViewModel
 import com.google.firebase.auth.FirebaseAuth
 import io.github.krtkush.lineartimer.LinearTimer
-import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.io.File
@@ -511,6 +512,16 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
 
     private fun initilization() {
         mTextureView = findViewById<View>(R.id.texture) as AutoFitTextureView?
+
+        /*   bindingObj?.swipeRefresh?.setOnRefreshListener {
+               if (this.isNetworkActiveWithMessage()) {
+                   if (bindingObj?.swipeRefresh?.isRefreshing == true)
+                       bindingObj?.swipeRefresh?.isRefreshing = false
+                   aa.clear()
+                   getListOfUsers()
+               } else bindingObj?.swipeRefresh?.isRefreshing = false
+           }*/
+
     }
 
     override fun onResume() {
@@ -1303,9 +1314,11 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
         val phones = cr.query(CommonDataKinds.Phone.CONTENT_URI, null, null, null, null)
         // use the cursor to access the contacts
 
-        val sharedPreferences: SharedPreferences = this.getSharedPreferences("Citypeople",
-            Context.MODE_PRIVATE)
-        val countryCode = sharedPreferences.getString("country_code","")
+        val sharedPreferences: SharedPreferences = this.getSharedPreferences(
+            "Citypeople",
+            Context.MODE_PRIVATE
+        )
+        val countryCode = sharedPreferences.getString("country_code", "")
 
         while (phones!!.moveToNext()) {
             // val arrayNumber = FriendModel()
@@ -1314,10 +1327,10 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
             var phone = phones.getString(phones.getColumnIndex(CommonDataKinds.Phone.NUMBER))
             phone = phone.replace("(", "").replace(")", "").replace("-", "").replace(" ", "")
             // get phone number
-            if (!phone.contains("+")){
-                phone = countryCode+phone
+            if (!phone.contains("+")) {
+                phone = countryCode + phone
             }
-            if (contacts.containsKey(phone)){
+            if (contacts.containsKey(phone)) {
                 continue
             }
             contacts[phone] = name
@@ -1329,8 +1342,6 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
             Log.d("name>>", name + "  " + phone)
 
         }
-
-
 
         getListOfUsers()
     }
@@ -1357,18 +1368,32 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
                 }
                 Status.SUCCESS -> {
                     mViewModel.loader.postValue(false)
+                    //   bindingObj?.swipeRefresh?.isRefreshing = false
+
                     it.data?.apply {
 
-                        var list = hashMapOf<String, Boolean>()
+                        var list = hashMapOf<String, User>()
 
                         it.data.users.map { T ->
-                            list[T.phone] = true
+                            list[T.phone] = T
                         }
 
+
+
                         aa.map { T ->
-                            if (list[T.phone]!=null)
-                            T.is_registered=true
+                            if (list[T.phone] != null) {
+                                T.is_registered = true
+                                T.id = list[T.phone]?.id ?: 0
+                                T.request_status = list[T.phone]?.request_status ?: 0
+                                T.already_friend = list[T.phone]?.already_friend ?: false
+                            }
+
                         }
+
+                        aa = aa.filter { T ->
+                            T.already_friend == false
+
+                        } as ArrayList<User>
 
                         aa.sortByDescending { it.is_registered }
 
@@ -1416,6 +1441,57 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
             }
         })
 
+        mViewModel.acceptFriend?.observe(this, Observer {
+            when (it.status) {
+                Status.LOADING -> mViewModel.loader.postValue(true)
+                Status.ERROR -> {
+                    mViewModel.loader.postValue(false)
+                    it.message?.let { msg ->
+                        Toast.makeText(this, msg.message, Toast.LENGTH_SHORT).show()
+                    } ?: Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
+                }
+                Status.SUCCESS -> {
+                    mViewModel.loader.postValue(false)
+                    if (it.data?.status == true) {
+                        if (it.data?.accept == 0) {
+                            Toast.makeText(
+                                applicationContext,
+                                "Reject Successfully",
+                                Toast.LENGTH_SHORT
+                            )
+                        } else {
+                            Toast.makeText(
+                                applicationContext,
+                                "Accept Successfully",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                        }
+                        aa.map { T ->
+                            if ( T.id == it.data.friend_id){
+                                T.request_status = 3 + it.data.accept
+                            }
+                        }
+
+                        aa.sortByDescending { it.is_registered }
+
+                        if (aa.isNullOrEmpty()) {
+                            bindingObj.emptyChatTv.makeVisible()
+                        } else {
+                            bindingObj.emptyChatTv.makeGone()
+                            mFriendAdapter.setDataList(aa.toMutableList())
+                            mFriendAdapter.notifyDataSetChanged()
+                            Log.e("ContactList", it.data.toString())
+                        }
+
+                        // finish()
+                    } else {
+                        Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        })
+
     }
 
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -1437,6 +1513,26 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
             mViewModel.addFriend(jsonObject)
         }
         Log.e("mySeletedList", friendList.toString())
+    }
+
+    override fun accept(item: User, position: Int) {
+        val currentUser = mAuth.currentUser
+        val jsonObject = JSONObject()
+        jsonObject.put("friend_id", item.id);
+        jsonObject.put("phone", currentUser?.phoneNumber);
+        jsonObject.put("accept", 1);
+        mViewModel.accept(jsonObject)
+
+    }
+
+    override fun reject(item: User, position: Int) {
+        val currentUser = mAuth.currentUser
+        val jsonObject = JSONObject()
+        jsonObject.put("friend_id", item.id);
+        jsonObject.put("phone", currentUser?.phoneNumber);
+        jsonObject.put("accept", 0);
+        mViewModel.accept(jsonObject)
+
     }
 
     override fun onBack() {
@@ -1485,13 +1581,8 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
                 "Share Via"
             )
         )
-        //  sendSMS(item.phone, "Your friend "+ item.name +" has sent you a friend request. You can start a video message by accepting the request by going to friend list section")
     }
 
-    private fun sendSMS(phoneNumber: String, message: String) {
-        val sentPI: PendingIntent = PendingIntent.getBroadcast(this, 0, Intent("SMS_SENT"), 0)
-        SmsManager.getDefault().sendTextMessage(phoneNumber, null, message, sentPI, null)
-    }
 
     /**
      * Compares two `Size`s based on their areas.

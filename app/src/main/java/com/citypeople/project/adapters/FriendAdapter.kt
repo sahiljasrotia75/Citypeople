@@ -35,6 +35,8 @@ class FriendAdapter(var listener: FriendItemListener) :
         this.nList.addAll(mList)
     }
 
+
+
     fun getCurrentItems(): MutableList<User> {
         return mList
     }
@@ -56,28 +58,69 @@ class FriendAdapter(var listener: FriendItemListener) :
             viewHolder.bindingObj.listener = listener
             viewHolder.bindingObj.bindingObj = mList[i]
             viewHolder.bindingObj.executePendingBindings()
+
+            viewHolder.bindingObj.txtRequested.visibility = View.GONE
+            viewHolder.bindingObj.checkBox.visibility = View.GONE
+            viewHolder.bindingObj.txtAccept.visibility = View.GONE
+            viewHolder.bindingObj.txtReject.visibility = View.GONE
+
             if (mList[i].isSelected)
-           //     viewHolder.bindingObj.txtInvite.visibility = View.GONE
-              viewHolder.bindingObj.checkBox.setBackgroundResource(R.drawable.check)
+                viewHolder.bindingObj.checkBox.setBackgroundResource(R.drawable.check)
+            //    viewHolder.bindingObj.txtAdd.text = "Requested"
             else
-            //    viewHolder.bindingObj.txtInvite.visibility = View.VISIBLE
-                 viewHolder.bindingObj.checkBox.setBackgroundResource(R.drawable.unchecked)
+                viewHolder.bindingObj.checkBox.setBackgroundResource(R.drawable.unchecked)
+            //  viewHolder.bindingObj.txtAdd.text = "Add"
 
             viewHolder.itemView.checkBox.setOnClickListener {
                 mList[i].isSelected = !mList[i].isSelected
                 notifyItemChanged(i)
             }
 
+
+            if (mList[i].request_status == 1) {
+                viewHolder.bindingObj.txtRequested.visibility = View.VISIBLE
+                viewHolder.bindingObj.txtRequested.text = "Requested"
+
+            } else if (mList[i].request_status == 2) {
+                viewHolder.bindingObj.txtAccept.visibility = View.VISIBLE
+                viewHolder.bindingObj.txtReject.visibility = View.VISIBLE
+            } else if (mList[i].request_status == 3) {
+                viewHolder.bindingObj.txtRequested.visibility = View.VISIBLE
+                viewHolder.bindingObj.txtRequested.text = "Rejected"
+              //  viewHolder.bindingObj.txtRequested.setTextColor(R.color.)
+
+            }
+            else if (mList[i].request_status == 4) {
+                viewHolder.bindingObj.txtRequested.visibility = View.VISIBLE
+                viewHolder.bindingObj.txtRequested.text = "Accepted"
+            } else {
+                viewHolder.bindingObj.checkBox.visibility = View.VISIBLE
+            }
+
             if (mList[i].is_registered) {
                 viewHolder.bindingObj.txtInvite.visibility = View.GONE
-                viewHolder.bindingObj.checkBox.visibility = View.VISIBLE
+                //   viewHolder.bindingObj.txtAdd.visibility = View.VISIBLE
+               // viewHolder.bindingObj.checkBox.visibility = View.GONE
+
             } else {
                 viewHolder.bindingObj.txtInvite.visibility = View.VISIBLE
+                // viewHolder.bindingObj.txtAdd.visibility = View.GONE
                 viewHolder.bindingObj.checkBox.visibility = View.GONE
             }
 
+
+
+
             viewHolder.itemView.txtInvite.setOnClickListener {
                 listener.invite(mList[i], position = i)
+            }
+
+            viewHolder.itemView.txtAccept.setOnClickListener {
+                listener.accept(mList[i], position = i)
+            }
+
+            viewHolder.itemView.txtReject.setOnClickListener {
+                listener.reject(mList[i], position = i)
             }
 
         }
@@ -144,12 +187,16 @@ class FriendAdapter(var listener: FriendItemListener) :
         fun setOtherFieldTextBreed(isOtherBreedText: String, user: User)
         fun onSelection(item: User, position: Int)
         fun invite(item: User, position: Int)
+        fun accept(item: User, position: Int)
+        fun reject(item: User, position: Int)
 
     }
 
     override fun getFilter(): Filter {
         return filter
     }
+
+
 
 
 }

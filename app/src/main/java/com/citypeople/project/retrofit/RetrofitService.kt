@@ -36,6 +36,12 @@ interface RetrofitService {
         @Field("name") name: String): Response<FriendResponse>
 
     @FormUrlEncoded
+    @POST("friends/accept")
+    suspend fun acceptRejectData( @Field("friend_id") friend_id: Int,
+                           @Field("phone") phone: String,
+                           @Field("accept") name: Int): Response<FriendResponse>
+
+    @FormUrlEncoded
     @POST("friendsngroups")
     suspend fun groupVideoListData(@Field("phone") phone: String): Response<ContactsResponse>
 

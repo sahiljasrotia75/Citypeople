@@ -36,14 +36,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_4sdp"
-            android:layout_marginEnd="@dimen/_4sdp"
             android:fontFamily="@font/poppins_medium"
             android:singleLine="true"
             android:text="@{bindingObj.name}"
             android:textColor="@color/black_light"
             android:textSize="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/checkBox"
+            app:layout_constraintEnd_toStartOf="@+id/txtAccept"
             app:layout_constraintStart_toEndOf="@+id/userImage"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -52,6 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/unchecked"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
@@ -61,29 +61,60 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_4sdp"
+            android:layout_marginEnd="4dp"
+            android:fontFamily="@font/poppins_medium"
             android:text="Invite"
+            android:visibility="gone"
             android:textColor="@color/black_light"
             android:textSize="@dimen/_10sdp"
-            android:visibility="gone"
-            android:fontFamily="@font/poppins_medium"
             app:layout_constraintBottom_toBottomOf="@+id/phnText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/phnText" />
 
         <TextView
-            android:id="@+id/txtAdd"
+            android:id="@+id/txtRequested"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_4sdp"
-            android:text="Add"
+            android:text="Requested"
+            android:visibility="gone"
             android:textColor="@color/black_light"
             android:textSize="@dimen/_10sdp"
-            android:visibility="gone"
             android:fontFamily="@font/poppins_medium"
             app:layout_constraintBottom_toBottomOf="@+id/phnText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/phnText" />
 
+
+        <TextView
+            android:id="@+id/txtAccept"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:fontFamily="@font/poppins_medium"
+            android:text="Accept"
+            android:visibility="gone"
+            android:textColor="@color/black_light"
+            android:textSize="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/phnText"
+            app:layout_constraintEnd_toStartOf="@+id/txtReject"
+            app:layout_constraintTop_toTopOf="@+id/phnText"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/txtReject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_4sdp"
+            android:layout_marginEnd="5dp"
+            android:fontFamily="@font/poppins_medium"
+            android:text="Reject"
+            android:visibility="gone"
+            android:textColor="@color/black_light"
+            android:textSize="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/txtAccept"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/txtAccept" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -13,12 +13,17 @@
             type="com.citypeople.project.views.FriendListener" />
     </data>
 
+
+   <!-- <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent">-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:context="com.citypeople.project.views.FriendActivity">
-
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/upperLayout"
@@ -195,4 +200,5 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintVertical_bias="1.0" />
     </RelativeLayout>
+    <!--</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
 </layout>

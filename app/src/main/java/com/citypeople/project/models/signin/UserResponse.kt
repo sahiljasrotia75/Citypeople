@@ -5,13 +5,13 @@ data class UserResponse(
     val user: User
 )
 data class User(
-    val created_at: String ="",
-    val id: Int = -1,
-    var name: String ,
+    var id: Int = 0,
+    var name: String,
     val phone: String,
     val updated_at: String="",
-    var isSelected :Boolean = false,
-    var is_group : Boolean? = null,
-    var is_registered : Boolean = false,
-
+    var isSelected:Boolean = false,
+    var is_group: Boolean? = null,
+    var is_registered: Boolean = false,
+    var request_status: Int = 0,
+    var already_friend: Boolean = false,
 )

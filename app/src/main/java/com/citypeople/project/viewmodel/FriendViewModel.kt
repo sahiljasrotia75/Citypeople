@@ -20,6 +20,9 @@ class FriendViewModel(private val authRepo: AuthRepo): BaseViewModel() {
     private val _addFriend= MutableLiveData<Resources<FriendResponse>>()
     var addFriend: LiveData<Resources<FriendResponse>>?=_addFriend
 
+    private val _acceptFriend= MutableLiveData<Resources<FriendResponse>>()
+    var acceptFriend: LiveData<Resources<FriendResponse>>?=_acceptFriend
+
     fun contacts(jsonObject: JSONObject) {
         viewModelScope.launch {
             runCatching {
@@ -45,6 +48,22 @@ class FriendViewModel(private val authRepo: AuthRepo): BaseViewModel() {
                 _addFriend.postValue(it)
             }.onFailure {
                 _addFriend.postValue(
+                    Resources.error(
+                        ErrorResponse(903,it.message.toString()),null)
+                )
+            }
+        }
+    }
+
+    fun accept(jsonObject: JSONObject) {
+        viewModelScope.launch {
+            runCatching {
+                _acceptFriend.postValue(Resources.loading())
+                authRepo.acceptFriend(jsonObject)
+            }.onSuccess{
+                _acceptFriend.postValue(it)
+            }.onFailure {
+                _acceptFriend.postValue(
                     Resources.error(
                         ErrorResponse(903,it.message.toString()),null)
                 )

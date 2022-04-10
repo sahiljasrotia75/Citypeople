@@ -76,6 +76,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
     FragmentCompat.OnRequestPermissionsResultCallback, LinearTimer.TimerListener,
     ProfileMediaItemListener, UserListener {
 
+    private var flag = false
     private val SENSOR_ORIENTATION_DEFAULT_DEGREES = 90
     private val SENSOR_ORIENTATION_INVERSE_DEGREES = 270
     private val DEFAULT_ORIENTATIONS = SparseIntArray()
@@ -726,10 +727,11 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
             Log.d("things called", "onLongPressed")
             if (!startRecordingcalled) {
                 startRecordingVideo()
-                linearTimer!!.startTimer()
+                linearTimer?.startTimer()
                 _binding?.strokeView?.visibility = View.VISIBLE
             }
             isSpeakButtonLongPressed = true
+            flag = true
             true
         }
 
@@ -741,9 +743,10 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
             // We're only interested in anything if our speak button is currently pressed.
             if (isSpeakButtonLongPressed) {
                 Log.d("things called", "onTouch")
+
                 stopRecordingVideo()
-                linearTimer!!.pauseTimer()
-                linearTimer!!.resetTimer()
+                linearTimer?.pauseTimer()
+                linearTimer?.resetTimer()
                 _binding?.strokeView?.visibility = View.GONE
                 startRecordingcalled = false
                 // Do something when the button is released.
@@ -758,13 +761,15 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
             Log.d("things called", "onLongPressed")
             if (!startRecordingcalled) {
                 startRecordingVideo()
-                linearTimerback!!.startTimer()
+                linearTimerback?.startTimer()
                 _binding?.strokeView?.visibility = View.VISIBLE
 
             }
             isSpeakButtonLongPressed = true
+            flag = false
             true
         }
+    @SuppressLint("ClickableViewAccessibility")
     private val recordTouchListenerback =
         View.OnTouchListener { pView, pEvent ->
             pView.onTouchEvent(pEvent)
@@ -773,13 +778,13 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
                 // We're only interested in anything if our speak button is currently pressed.
                 if (isSpeakButtonLongPressed) {
                     Log.d("things called", "onTouch")
+                    stopRecordingVideo()
+                    linearTimerback?.pauseTimer()
+                    linearTimerback?.resetTimer()
+                    _binding?.strokeView?.visibility = View.GONE
                     startRecordingcalled = false
                     // Do something when the button is released.
                     isSpeakButtonLongPressed = false
-                    linearTimerback!!.pauseTimer()
-                    linearTimerback!!.resetTimer()
-                    _binding?.strokeView?.visibility = View.GONE
-                    stopRecordingVideo()
                 }
             }
             false
@@ -795,6 +800,8 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
         super.onResume()
         startBackgroundThread()
         mCameraLensFacingDirection = 0
+        _binding?.strokeView?.visibility = View.GONE
+
         // When the screen is turned off and turned back on, the SurfaceTexture is already
         // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
         // a camera and start preview from here (otherwise, we wait until the surface is ready in
@@ -996,8 +1003,8 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
                 } else {
                     mPreviewSize?.let {
                         mTextureView!!.setAspectRatio(
-                            it.getHeight(),
-                            mPreviewSize!!.getWidth()
+                            it.height,
+                            mPreviewSize!!.width
                         )
                     }
                 }
@@ -1090,8 +1097,8 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
             } else {
                 mPreviewSize?.let {
                     mTextureView!!.setAspectRatio(
-                        it.getHeight(),
-                        mPreviewSize!!.getWidth()
+                        it.height,
+                        mPreviewSize!!.width
                     )
                 }
             }
@@ -1504,8 +1511,12 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
             startRecordingcalled = false
             // Do something when the button is released.
             isSpeakButtonLongPressed = false
-            linearTimer!!.resetTimer()
-            linearTimerback!!.resetTimer()
+            if (flag){
+                linearTimer?.resetTimer()
+            }else{
+                linearTimerback?.resetTimer()
+            }
+
             _binding?.strokeView?.visibility = View.GONE
             stopRecordingVideo()
 
@@ -1849,18 +1860,18 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
 
         // Stop recording
         try {
-            mMediaRecorder!!.stop()
-            mMediaRecorder!!.reset()
+            mMediaRecorder?.stop()
+            mMediaRecorder?.reset()
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
-        val temp_path = mNextVideoAbsolutePath!!
+        val temp_path = mNextVideoAbsolutePath
         val activity: Activity? = activity
         if (null != activity) {
             Log.d(Camera2BasicFragmentKt.TAG, "Video saved: $mNextVideoAbsolutePath")
         }
         mNextVideoAbsolutePath = null
-        startVideoCompress(temp_path)
+        temp_path?.let { startVideoCompress(it) }
         startPreview()
     }
 

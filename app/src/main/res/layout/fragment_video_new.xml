@@ -41,8 +41,8 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_centerInParent="true"
                     android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
                     android:background="@color/black">
 
                     <!--<com.halilibo.bettervideoplayer.BetterVideoPlayer
@@ -61,8 +61,8 @@
                         android:id="@+id/feeds_media_rv"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:orientation="horizontal"
                         android:nestedScrollingEnabled="true"
+                        android:orientation="horizontal"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -92,24 +92,23 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <LinearLayout
+                        android:id="@+id/blockView"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:id="@+id/blockView"
-                        android:background="@color/black"
+                        android:background="@color/white"
                         android:orientation="vertical"
                         app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintHeight_percent="0.2"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="1"
-                        app:layout_constraintHeight_percent="0.2" />
+                        app:layout_constraintVertical_bias="1" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/mainConstraint1"
                         android:layout_width="@dimen/_200sdp"
                         android:layout_height="@dimen/_200sdp"
-                        android:id="@+id/mainConstraint1"
+                        timer:layout_constraintBottom_toBottomOf="parent"
                         timer:layout_constraintLeft_toLeftOf="parent"
-                        timer:layout_constraintRight_toRightOf="parent"
-                        timer:layout_constraintBottom_toTopOf="@id/blockView"
-                        timer:layout_constraintVertical_bias="1">
+                        timer:layout_constraintRight_toRightOf="parent">
 
 
                         <RelativeLayout
@@ -139,8 +138,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentTop="true"
                                 android:layout_centerHorizontal="true"
-                                timer:initialColor="@color/white"
-                                timer:progressColor="@color/appprimarycolor"
+                                timer:initialColor="@color/appprimarycolor"
+                                timer:progressColor="@color/white"
                                 timer:radius="12dp"
                                 timer:startingPoint="270"
                                 timer:strokeWidth="2dp" />
@@ -175,8 +174,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentTop="true"
                                 android:layout_centerHorizontal="true"
-                                timer:initialColor="@color/white"
-                                timer:progressColor="@color/appprimarycolor"
+                                timer:initialColor="@color/appprimarycolor"
+                                timer:progressColor="@color/white"
                                 timer:radius="16dp"
                                 timer:startingPoint="270"
                                 timer:strokeWidth="2dp" />
@@ -190,7 +189,7 @@
                             android:fontFamily="@font/poppins_medium"
                             android:gravity="center"
                             android:text="Hold to talk"
-                            android:textColor="@color/white"
+                            android:textColor="@color/black"
                             android:textSize="@dimen/_10sdp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="@+id/control"

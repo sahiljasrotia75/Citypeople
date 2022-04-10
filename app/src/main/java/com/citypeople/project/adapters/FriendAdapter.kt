@@ -61,20 +61,19 @@ class FriendAdapter(var listener: FriendItemListener) :
 
             viewHolder.bindingObj.txtRequested.visibility = View.GONE
             viewHolder.bindingObj.checkBox.visibility = View.GONE
+            viewHolder.bindingObj.txtAdd.visibility = View.GONE
             viewHolder.bindingObj.txtAccept.visibility = View.GONE
             viewHolder.bindingObj.txtReject.visibility = View.GONE
 
-            if (mList[i].isSelected)
+        /*    if (mList[i].isSelected)
                 viewHolder.bindingObj.checkBox.setBackgroundResource(R.drawable.check)
-            //    viewHolder.bindingObj.txtAdd.text = "Requested"
             else
-                viewHolder.bindingObj.checkBox.setBackgroundResource(R.drawable.unchecked)
-            //  viewHolder.bindingObj.txtAdd.text = "Add"
+                viewHolder.bindingObj.checkBox.setBackgroundResource(R.drawable.unchecked)*/
 
-            viewHolder.itemView.checkBox.setOnClickListener {
+        /*    viewHolder.itemView.checkBox.setOnClickListener {
                 mList[i].isSelected = !mList[i].isSelected
                 notifyItemChanged(i)
-            }
+            }*/
 
 
             if (mList[i].request_status == 1) {
@@ -94,7 +93,8 @@ class FriendAdapter(var listener: FriendItemListener) :
                 viewHolder.bindingObj.txtRequested.visibility = View.VISIBLE
                 viewHolder.bindingObj.txtRequested.text = "Accepted"
             } else {
-                viewHolder.bindingObj.checkBox.visibility = View.VISIBLE
+                //viewHolder.bindingObj.checkBox.visibility = View.VISIBLE
+                viewHolder.bindingObj.txtAdd.visibility = View.VISIBLE
             }
 
             if (mList[i].is_registered) {
@@ -104,8 +104,9 @@ class FriendAdapter(var listener: FriendItemListener) :
 
             } else {
                 viewHolder.bindingObj.txtInvite.visibility = View.VISIBLE
-                // viewHolder.bindingObj.txtAdd.visibility = View.GONE
-                viewHolder.bindingObj.checkBox.visibility = View.GONE
+              //  viewHolder.bindingObj.checkBox.visibility = View.GONE
+                viewHolder.bindingObj.txtAdd.visibility = View.GONE
+
             }
 
 
@@ -121,6 +122,10 @@ class FriendAdapter(var listener: FriendItemListener) :
 
             viewHolder.itemView.txtReject.setOnClickListener {
                 listener.reject(mList[i], position = i)
+            }
+
+            viewHolder.itemView.txtAdd.setOnClickListener {
+                listener.add(mList[i], position = i)
             }
 
         }
@@ -189,6 +194,7 @@ class FriendAdapter(var listener: FriendItemListener) :
         fun invite(item: User, position: Int)
         fun accept(item: User, position: Int)
         fun reject(item: User, position: Int)
+        fun add(item: User, position: Int)
 
     }
 

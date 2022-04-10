@@ -24,6 +24,7 @@
     <color name="black_overlay">#66000000</color>
     <color name="greyDark">#00241B</color>
     <color name="secondary">@color/greyDark</color>
+    <color name="light_orange">#FFD580</color>
 
 
 </resources>

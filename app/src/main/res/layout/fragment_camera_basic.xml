@@ -83,6 +83,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+
+
             <LinearLayout
                 android:id="@+id/blockView"
                 android:layout_width="match_parent"
@@ -199,7 +201,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/_12sdp"
-                android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -208,6 +209,7 @@
                     android:id="@+id/group_friend_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                   android:layout_alignParentStart="true"
                     android:layout_marginHorizontal="@dimen/_4sdp"
                     android:orientation="horizontal">
 
@@ -271,6 +273,33 @@
                     android:visibility="gone" />
 
 
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/explore_search_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_marginVertical="@dimen/_10sdp"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginEnd="@dimen/_100sdp"
+                    android:layout_below="@+id/group_friend_layout"
+                    android:background="@drawable/edittext_pink_back"
+                    android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz '-"
+                    android:drawableStart="@drawable/ic_search_icon"
+                    android:drawablePadding="@dimen/_8sdp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:hint="@string/search"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:maxLength="50"
+                    android:maxLines="1"
+                    android:onTextChanged="@{listener.onTextChanged}"
+                    android:padding="@dimen/_12sdp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
+                    android:textSize="@dimen/_10sdp" />
+
+
+
                 <RelativeLayout
                     android:id="@+id/newlin"
                     android:layout_width="wrap_content"
@@ -283,86 +312,69 @@
                         android:id="@+id/lin_friend"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toLeftOf="@+id/materialCardView"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:layout_alignParentEnd="true"
+                        android:orientation="horizontal">
 
-                        <ImageView
-                            android:id="@+id/img_friend"
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:padding="10dp"
-                            android:src="@drawable/add_friends" />
+                            android:gravity="center"
+                            android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/tv_friend"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/poppins_medium"
-                            android:text="Friend"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/_10sdp" />
+                            <ImageView
+                                android:id="@+id/img_friend"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:padding="10dp"
+                                android:src="@drawable/add_friends" />
+
+                            <TextView
+                                android:id="@+id/tv_friend"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="Friend"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/_10sdp" />
+                        </LinearLayout>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/materialCardView"
+                            android:layout_width="@dimen/_80sdp"
+                            android:layout_height="@dimen/_120sdp"
+                            android:layout_marginHorizontal="@dimen/_8sdp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <com.citypeople.project.cameranew.AutoFitTextureView
+                                    android:id="@+id/texture"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    timer:layout_constraintBottom_toBottomOf="parent"
+                                    timer:layout_constraintEnd_toEndOf="parent"
+                                    timer:layout_constraintStart_toStartOf="parent"
+                                    timer:layout_constraintTop_toTopOf="parent"
+                                    timer:layout_constraintVertical_bias="0" />
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            <View
+                                android:id="@+id/stroke_view"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/green_outline"
+                                android:visibility="gone" />
+                        </com.google.android.material.card.MaterialCardView>
+
+
                     </LinearLayout>
 
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/materialCardView"
-                        android:layout_width="@dimen/_80sdp"
-                        android:layout_height="@dimen/_120sdp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_gravity="end"
-                        android:layout_marginHorizontal="@dimen/_8sdp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
 
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <com.citypeople.project.cameranew.AutoFitTextureView
-                                android:id="@+id/texture"
-                                android:layout_width="match_parent"
-                                android:layout_height="0dp"
-                                timer:layout_constraintBottom_toBottomOf="parent"
-                                timer:layout_constraintEnd_toEndOf="parent"
-                                timer:layout_constraintStart_toStartOf="parent"
-                                timer:layout_constraintTop_toTopOf="parent"
-                                timer:layout_constraintVertical_bias="0" />
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-                        <View
-                            android:id="@+id/stroke_view"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:visibility="gone"
-                            android:background="@drawable/green_outline"
-                            />
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/explore_search_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_40sdp"
-                        android:layout_below="@+id/lin_friend"
-                        android:layout_marginHorizontal="@dimen/_8sdp"
-                        android:layout_marginVertical="@dimen/_10sdp"
-                        android:layout_toLeftOf="@+id/materialCardView"
-                        android:background="@drawable/edittext_pink_back"
-                        android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz '-"
-                        android:drawableStart="@drawable/ic_search_icon"
-                        android:drawablePadding="@dimen/_8sdp"
-                        android:fontFamily="@font/poppins_medium"
-                        android:hint="@string/search"
-                        android:imeOptions="actionDone"
-                        android:inputType="text"
-                        android:maxLength="50"
-                        android:maxLines="1"
-                        android:onTextChanged="@{listener.onTextChanged}"
-                        android:padding="@dimen/_12sdp"
-                        android:singleLine="true"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/black"
-                        android:textSize="@dimen/_10sdp" />
                 </RelativeLayout>
 
                 <TextView
@@ -374,6 +386,7 @@
                     android:layout_marginHorizontal="@dimen/_8sdp"
                     android:layout_marginVertical="@dimen/_8sdp"
                     android:textColor="@color/black" />
+
 
             </RelativeLayout>
 

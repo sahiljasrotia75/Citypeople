@@ -22,7 +22,7 @@ interface RetrofitService {
 
     @FormUrlEncoded
     @POST("friends/add")
-    suspend fun friendData( @Field("ids[]") ids: ArrayList<Int>,
+    suspend fun friendData( @Field("friend_id") friend_id: Int,
                              @Field("phone") phone: String): Response<FriendResponse>
 
     @FormUrlEncoded

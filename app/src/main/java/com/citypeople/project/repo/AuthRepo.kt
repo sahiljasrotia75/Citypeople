@@ -37,7 +37,7 @@ class AuthRepo(private val retrofitService :RetrofitService) {
     suspend fun addFriend(jsonObject: JSONObject): Resources<FriendResponse> {
         return safeApiCall {
             retrofitService.friendData(
-                jsonObject["ids"] as ArrayList<Int>,
+                    jsonObject["friend_id"] as Int,
                 jsonObject["phone"] as String
             )
         }

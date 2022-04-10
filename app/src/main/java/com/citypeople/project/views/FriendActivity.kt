@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
-import android.app.PendingIntent
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
@@ -23,7 +22,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.provider.ContactsContract.*
-import android.telephony.SmsManager
 import android.util.Log
 import android.util.Range
 import android.util.Size
@@ -49,11 +47,9 @@ import com.citypeople.project.makeVisible
 import com.citypeople.project.models.signin.User
 import com.citypeople.project.retrofit.Status
 import com.citypeople.project.utilities.common.BaseViewModel
-import com.citypeople.project.utilities.extensions.isNetworkActiveWithMessage
 import com.citypeople.project.viewmodel.FriendViewModel
 import com.google.firebase.auth.FirebaseAuth
 import io.github.krtkush.lineartimer.LinearTimer
-import org.json.JSONException
 import org.json.JSONObject
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.io.File
@@ -62,7 +58,6 @@ import java.io.IOException
 import java.util.*
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
 
 class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemListener {
 
@@ -1350,7 +1345,6 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
         val currentUser = mAuth.currentUser
         val jsonObject = JSONObject()
         val list = ArrayList<String>(contacts.keys)
-
         jsonObject.put("contacts", list);
         jsonObject.put("phone", currentUser?.phoneNumber);
         mViewModel.contacts(jsonObject)
@@ -1377,8 +1371,6 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
                         it.data.users.map { T ->
                             list[T.phone] = T
                         }
-
-
 
                         aa.map { T ->
                             if (list[T.phone] != null) {
@@ -1431,9 +1423,27 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
                 Status.SUCCESS -> {
                     mViewModel.loader.postValue(false)
                     if (it.data?.status == true) {
+
+                         aa.map { T ->
+                             if (T.id == it.data.friend_id) {
+                                 T.request_status = 3 + it.data.accept
+                             }
+                         }
+
+                         aa.sortByDescending { it.is_registered }
+
+                         if (aa.isNullOrEmpty()) {
+                             bindingObj.emptyChatTv.makeVisible()
+                         } else {
+                             bindingObj.emptyChatTv.makeGone()
+                             mFriendAdapter.setDataList(aa.toMutableList())
+                             mFriendAdapter.notifyDataSetChanged()
+                             Log.e("ContactList", it.data.toString())
+                         }
+
                         Toast.makeText(applicationContext, "Friends updated", Toast.LENGTH_SHORT)
                             .show()
-                        finish()
+                      //  finish()
                     } else {
                         Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
                     }
@@ -1468,7 +1478,7 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
                                 .show()
                         }
                         aa.map { T ->
-                            if ( T.id == it.data.friend_id){
+                            if (T.id == it.data.friend_id) {
                                 T.request_status = 3 + it.data.accept
                             }
                         }
@@ -1535,6 +1545,15 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
 
     }
 
+    override fun add(item: User, position: Int) {
+        val currentUser = mAuth.currentUser
+        val jsonObject = JSONObject()
+        jsonObject.put("friend_id", item.id);
+        jsonObject.put("phone", currentUser?.phoneNumber);
+        mViewModel.addFriend(jsonObject)
+
+    }
+
     override fun onBack() {
         finish()
     }
@@ -1561,28 +1580,18 @@ class FriendActivity : BaseActivity(), FriendListener, FriendAdapter.FriendItemL
     }
 
     override fun invite(item: User, position: Int) {
-        /*Create an ACTION_SEND Intent*/
-        val intent = Intent(Intent.ACTION_SEND)
-        /*This will be the actual content you wish you share.*/
         val shareBody =
             "Your friend " + item.name + " has sent you a friend request. You can start a video message by accepting the request by going to friend list section."
-        /*The type of the content is text, obviously.*/
-        intent.type = "text/plain"
-        /*Applying information Subject and Body.*/
-        intent.putExtra(
-            Intent.EXTRA_SUBJECT,
-            "Subject Here"
-        )
-        intent.putExtra(Intent.EXTRA_TEXT, shareBody)
-        /*Fire!*/
+        val sendIntent = Intent(Intent.ACTION_VIEW)
+        sendIntent.data = Uri.parse("sms:" + item.phone);
+        sendIntent.putExtra("sms_body", shareBody);
         startActivity(
             Intent.createChooser(
-                intent,
+                sendIntent,
                 "Share Via"
             )
         )
     }
-
 
     /**
      * Compares two `Size`s based on their areas.

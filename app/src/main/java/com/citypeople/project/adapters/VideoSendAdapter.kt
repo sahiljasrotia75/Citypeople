@@ -61,6 +61,7 @@ class VideoSendAdapter(var listener: VideoSendAdapter.VideoSendItemListener) :
                 mList[i].isSelected = !mList[i].isSelected
                 notifyItemChanged(i)
             }
+
         }
     }
 
@@ -85,8 +86,7 @@ class VideoSendAdapter(var listener: VideoSendAdapter.VideoSendItemListener) :
                 filteredList.addAll(nList)
                 listener.onEmptySearch(filteredList.isEmpty())
             } else {
-                val filterPattern =
-                    constraint.toString().toLowerCase(Locale.ROOT).trim { it <= ' ' }
+                val filterPattern = constraint.toString().toLowerCase(Locale.ROOT).trim { it <= ' ' }
                 for (item in nList) {
                     when {
                         item.name.toLowerCase(Locale.ROOT).contains(filterPattern) -> {

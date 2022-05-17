@@ -1,57 +1,33 @@
 {
   "project_info": {
-    "project_number": "1022272384239",
-    "project_id": "citypeople-app",
-    "storage_bucket": "citypeople-app.appspot.com"
+    "project_number": "299553030612",
+    "project_id": "citypeople-e4e12",
+    "storage_bucket": "citypeople-e4e12.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1022272384239:android:e8b8e66d343ead3f437f1a",
+        "mobilesdk_app_id": "1:299553030612:android:5359ecf3fee290e2525641",
         "android_client_info": {
           "package_name": "com.citypeople.project"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1022272384239-0i49mtns0ae9gi36uc04i2h6lm70jmd3.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.citypeople.project",
-            "certificate_hash": "e9764026e643a837912c98f91971b7f59798dc38"
-          }
-        },
-        {
-          "client_id": "1022272384239-c66h412ubodik6nob4fb5t6slvl81354.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.citypeople.project",
-            "certificate_hash": "0d1ac20da23f51f9d4686457a140d7db0a5aa004"
-          }
-        },
-        {
-          "client_id": "1022272384239-m0k8fsb6q67pglahutmevm3li2055oev.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.citypeople.project",
-            "certificate_hash": "ea03adf6de4f83515e4a84c060263363da4aceae"
-          }
-        },
-        {
-          "client_id": "1022272384239-b4nhd7fb3s51dppttro6vf6n5save4to.apps.googleusercontent.com",
+          "client_id": "299553030612-p9vm04ngg254g9crvq2co7o8aaounasq.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBQFmwHuYlnizGzcYaCQc7KAxMYRerDFhM"
+          "current_key": "AIzaSyBo5yB1Co5NsYn7A7I98Uv76UCSyQxS5gk"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1022272384239-b4nhd7fb3s51dppttro6vf6n5save4to.apps.googleusercontent.com",
+              "client_id": "299553030612-p9vm04ngg254g9crvq2co7o8aaounasq.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

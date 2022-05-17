@@ -1802,7 +1802,7 @@ class Camera2BasicFragmentKt : Fragment(), ActivityCompat.OnRequestPermissionsRe
                             mIsRecordingVideo = true
 
                             // Start recording
-                            mMediaRecorder!!.start()
+                            mMediaRecorder?.start()
                         }
                     }
 

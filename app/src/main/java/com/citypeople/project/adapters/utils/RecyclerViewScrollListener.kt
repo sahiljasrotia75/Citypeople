@@ -11,6 +11,7 @@ abstract class RecyclerViewScrollListener : RecyclerView.OnScrollListener() {
     @Volatile
     private var mEnabled = true
     private var mPreLoadCount = 0
+     var scrollDirection = 0
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
         if (mEnabled) {
@@ -20,8 +21,23 @@ abstract class RecyclerViewScrollListener : RecyclerView.OnScrollListener() {
             visibleItemCount = mLayoutManager.childCount
             firstVisibleItem = mLayoutManager.findFirstCompletelyVisibleItemPosition()
             onItemIsFirstVisibleItem(firstVisibleItem)
+
+            if (dx > 0) {
+                System.out.println("Scrolled Right");
+                scrollDirection=1
+            } else if (dx < 0) {
+                System.out.println("Scrolled Left");
+                scrollDirection= -1
+            } else{
+                scrollDirection= 0
+            }
         }
+
+
     }
+
+
+
 
     /**
      * Called when end of scroll is reached.

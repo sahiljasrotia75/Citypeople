@@ -57,13 +57,9 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.lang.Exception
-import java.lang.NullPointerException
-import java.lang.RuntimeException
 import java.util.*
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
 
 class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
 
@@ -638,29 +634,31 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
 
         bindingObject.viewLeft.setOnClickListener {
             if (layoutManager.findFirstVisibleItemPosition() > 0) {
-                //   recyclerView?.smoothScrollToPosition(layoutManager.findFirstVisibleItemPosition() - 1)
+                // recyclerView?.smoothScrollToPosition(layoutManager.findFirstVisibleItemPosition() - 1)
                 var jumpTo = -2
-                val arrayUserId = arrayListOf<Int>()
-                val currentUserIdIndex = bindingObject.feedsMediaRv.findFirstVisibleItemPosition()
-
+                //val arrayUserId = arrayListOf<Int>()
+                val currentUserIdIndex =
+                    bindingObject.feedsMediaRv.findFirstVisibleItemPosition()
                 if (currentUserIdIndex == RecyclerView.NO_POSITION) {
-                    Toast.makeText(this, "There is no story", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "There is no story", Toast.LENGTH_SHORT)
+                        .show()
                 } else {
-                    stories[currentUserIdIndex].user_id
-                    arrayUserId.addAll(listOf(stories[currentUserIdIndex].user_id))
+                    //stories[currentUserIdIndex].user_id
+                    // arrayUserId.addAll(listOf(stories[currentUserIdIndex].user_id))
+
                     Log.e("currentUserIdIndex", currentUserIdIndex.toString())
                     stories.forEachIndexed { index, storyModel ->
                         if (index < currentUserIdIndex && stories[currentUserIdIndex].user_id != stories[index].user_id) {
                             jumpTo = index
                         }
+
                     }
 
                     if (jumpTo >= 0) {
                         recyclerView?.smoothScrollToPosition(jumpTo)
                     } else {
-                        finish()
+                         finish()
                     }
-
                 }
             } else {
                 recyclerView?.smoothScrollToPosition(0)
@@ -672,14 +670,15 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
             // recyclerView?.smoothScrollToPosition(layoutManager.findLastVisibleItemPosition() + 1)
 
             var jumpTo = -2
-            val arrayUserId = arrayListOf<Int>()
-            val currentUserIdIndex = bindingObject.feedsMediaRv.findFirstVisibleItemPosition()
-
+            //val arrayUserId = arrayListOf<Int>()
+            val currentUserIdIndex =
+                bindingObject.feedsMediaRv.findFirstVisibleItemPosition()
             if (currentUserIdIndex == RecyclerView.NO_POSITION) {
-                Toast.makeText(this, "There is no story", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "There is no story", Toast.LENGTH_SHORT)
+                    .show()
             } else {
-                stories[currentUserIdIndex].user_id
-                arrayUserId.addAll(listOf(stories[currentUserIdIndex].user_id))
+                //stories[currentUserIdIndex].user_id
+                // arrayUserId.addAll(listOf(stories[currentUserIdIndex].user_id))
 
                 Log.e("currentUserIdIndex", currentUserIdIndex.toString())
                 stories.forEachIndexed { index, storyModel ->
@@ -691,9 +690,8 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
                 if (jumpTo >= 0) {
                     recyclerView?.smoothScrollToPosition(jumpTo)
                 } else {
-                    finish()
+                     finish()
                 }
-
             }
         }
 
@@ -701,11 +699,11 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
 
     private fun extractIntent() {
         val ii = intent
-        currentId = ii.getIntExtra("id", 0)?:0
-        currentUserId = ii.getIntExtra("userId", 0)?:0
+        currentId = ii.getIntExtra("id", 0) ?: 0
+        currentUserId = ii.getIntExtra("userId", 0) ?: 0
         if (intent.extras?.containsKey("currentLocation") == false) return
 
-        if (intent.extras?.containsKey("currentLocation") == true){
+        if (intent.extras?.containsKey("currentLocation") == true) {
             myLocation = intent.extras?.getString("currentLocation")
             Log.e("MyLocation", myLocation.toString())
         } else {
@@ -736,7 +734,7 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
 
                                 stories.forEachIndexed { index, storyModel ->
                                     if (currentId == stories[index].id) {
-                                         currentVideoIndex = index
+                                        currentVideoIndex = index
                                         Log.e("currentVideoIndex", currentVideoIndex.toString())
                                     }
                                 }
@@ -792,7 +790,7 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
             if (!startRecordingcalled) {
                 startRecordingVideo()
                 linearTimer!!.startTimer()
-                bindingObject.strokeView.visibility=View.VISIBLE
+                bindingObject.strokeView.visibility = View.VISIBLE
 
             }
             isSpeakButtonLongPressed = true
@@ -810,7 +808,7 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
                 stopRecordingVideo()
                 linearTimer!!.pauseTimer()
                 linearTimer!!.resetTimer()
-                bindingObject.strokeView.visibility=View.GONE
+                bindingObject.strokeView.visibility = View.GONE
 
                 startRecordingcalled = false
                 // Do something when the button is released.
@@ -826,7 +824,7 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
             if (!startRecordingcalled) {
                 startRecordingVideo()
                 linearTimerback!!.startTimer()
-                bindingObject.strokeView.visibility=View.VISIBLE
+                bindingObject.strokeView.visibility = View.VISIBLE
             }
             isSpeakButtonLongPressed = true
             true
@@ -843,7 +841,7 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
                 stopRecordingVideo()
                 linearTimerback!!.pauseTimer()
                 linearTimerback!!.resetTimer()
-                bindingObject.strokeView.visibility=View.GONE
+                bindingObject.strokeView.visibility = View.GONE
 
                 startRecordingcalled = false
                 // Do something when the button is released.
@@ -867,32 +865,72 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
         scrollListener = object : RecyclerViewScrollListener() {
             override fun onScrollStateChanged(recycler: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recycler, newState)
-                if (!recyclerView!!.canScrollHorizontally(1)) {
-                    //function that add new elements to my recycler view
-                    var jumpTo = -2
-                    val arrayUserId = arrayListOf<Int>()
-                    val currentUserIdIndex =
-                        bindingObject.feedsMediaRv.findFirstVisibleItemPosition()
-                    if (currentUserIdIndex == RecyclerView.NO_POSITION) {
-                        Toast.makeText(applicationContext, "There is no story", Toast.LENGTH_SHORT)
-                            .show()
-                    } else {
-                        stories[currentUserIdIndex].user_id
-                        arrayUserId.addAll(listOf(stories[currentUserIdIndex].user_id))
 
-                        Log.e("currentUserIdIndex", currentUserIdIndex.toString())
-                        stories.forEachIndexed { index, storyModel ->
-                            if (index > currentUserIdIndex && jumpTo == -2 && stories[currentUserIdIndex].user_id != stories[index].user_id) {
-                                jumpTo = index
+                if (!recyclerView!!.canScrollHorizontally(1)) {
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        if (scrollListener.scrollDirection == -1) {
+                            //left swipe
+                            if (layoutManager.findFirstVisibleItemPosition() > 0) {
+                                // recyclerView?.smoothScrollToPosition(layoutManager.findFirstVisibleItemPosition() - 1)
+                                var jumpTo = -2
+                                val arrayUserId = arrayListOf<Int>()
+                                val currentUserIdIndex =
+                                    bindingObject.feedsMediaRv.findFirstVisibleItemPosition()
+
+                                if (currentUserIdIndex == RecyclerView.NO_POSITION) {
+                                    //   Toast.makeText(, "There is no story", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    stories[currentUserIdIndex].user_id
+                                    arrayUserId.addAll(listOf(stories[currentUserIdIndex].user_id))
+                                    Log.e("currentUserIdIndex", currentUserIdIndex.toString())
+                                    stories.forEachIndexed { index, storyModel ->
+                                        if (index < currentUserIdIndex && stories[currentUserIdIndex].user_id != stories[index].user_id) {
+                                            jumpTo = index
+                                        }
+                                    }
+
+                                    if (jumpTo >= 0) {
+                                        recyclerView?.smoothScrollToPosition(jumpTo)
+                                    }
+
+                                }
+                            } else {
+                                recyclerView?.smoothScrollToPosition(0)
+                            }
+
+                        } else if (scrollListener.scrollDirection == 1) {
+                            // right swipe
+
+                            var jumpTo = -2
+                            val arrayUserId = arrayListOf<Int>()
+                            val currentUserIdIndex =
+                                bindingObject.feedsMediaRv.findFirstVisibleItemPosition()
+
+                            if (currentUserIdIndex == RecyclerView.NO_POSITION) {
+                                // Toast.makeText(this, "There is no story", Toast.LENGTH_SHORT).show()
+                            } else {
+                                stories[currentUserIdIndex].user_id
+                                arrayUserId.addAll(listOf(stories[currentUserIdIndex].user_id))
+
+                                Log.e("currentUserIdIndex", currentUserIdIndex.toString())
+                                stories.forEachIndexed { index, storyModel ->
+                                    if (index > currentUserIdIndex && jumpTo == -2 && stories[currentUserIdIndex].user_id != stories[index].user_id) {
+                                        jumpTo = index
+                                    }
+                                }
+
+                                if (jumpTo >= 0) {
+                                    recyclerView?.smoothScrollToPosition(jumpTo)
+                                }
+
                             }
                         }
 
-                        if (jumpTo >= 0) {
-                            recyclerView?.smoothScrollToPosition(jumpTo)
-                        } else {
-                            // finish()
-                        }
+
                     }
+                    Log.e("newState", newState.toString())
+                    //function that add new elements to my recycler view
+
                 }
             }
 
@@ -1601,7 +1639,7 @@ class StoryVideoActivity : AppCompatActivity(), LinearTimer.TimerListener {
         stopRecordingVideo()
         linearTimer!!.resetTimer()
         linearTimerback!!.resetTimer()
-        bindingObject.strokeView.visibility=View.GONE
+        bindingObject.strokeView.visibility = View.GONE
 
         startRecordingcalled = false
         // Do something when the button is released.
